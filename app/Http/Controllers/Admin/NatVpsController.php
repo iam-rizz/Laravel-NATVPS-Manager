@@ -7,6 +7,7 @@ use App\Models\NatVps;
 use App\Models\Server;
 use App\Models\User;
 use App\Enums\UserRole;
+use App\Services\Virtualizor\VirtualizorService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -164,5 +165,88 @@ class NatVpsController extends Controller
         return redirect()
             ->back()
             ->with('success', "User assignment removed from NAT VPS '{$natVps->hostname}'.");
+    }
+
+    /**
+     * Import NAT VPS instances from a Virtualizor server.
+     */
+    public function importFromServer(Request $request, Server $server, VirtualizorService $virtualizorService)
+    {
+        try {
+            $vpsList = $virtualizorService->listVps($server);
+
+            $imported = 0;
+            $updated = 0;
+            $skipped = 0;
+
+            foreach ($vpsList as $vpsId => $vpsInfo) {
+                $existing = NatVps::where('server_id', $server->id)
+                    ->where('vps_id', $vpsId)
+                    ->first();
+
+                if ($existing) {
+                    // Update existing record with fresh data
+                    $existing->update([
+                        'hostname' => $vpsInfo->hostname ?? $existing->hostname,
+                        'cached_specs' => $vpsInfo->toArray(),
+                        'specs_cached_at' => now(),
+                    ]);
+                    $updated++;
+                } else {
+                    // Create new record
+                    NatVps::create([
+                        'server_id' => $server->id,
+                        'vps_id' => $vpsId,
+                        'hostname' => $vpsInfo->hostname ?? "VPS-{$vpsId}",
+                        'ssh_port' => 22,
+                        'cached_specs' => $vpsInfo->toArray(),
+                        'specs_cached_at' => now(),
+                    ]);
+                    $imported++;
+                }
+            }
+
+            $message = "Import completed: {$imported} imported, {$updated} updated.";
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'data' => [
+                        'imported' => $imported,
+                        'updated' => $updated,
+                        'skipped' => $skipped,
+                        'total' => count($vpsList),
+                    ],
+                ]);
+            }
+
+            return redirect()
+                ->route('admin.nat-vps.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            $errorMessage = "Failed to import VPS: " . $e->getMessage();
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage,
+                ], 500);
+            }
+
+            return redirect()
+                ->back()
+                ->with('error', $errorMessage);
+        }
+    }
+
+    /**
+     * Show import selection page.
+     */
+    public function showImport()
+    {
+        $servers = Server::where('is_active', true)->orderBy('name')->get();
+
+        return view('admin.nat-vps.import', compact('servers'));
     }
 }

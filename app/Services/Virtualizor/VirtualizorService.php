@@ -23,7 +23,7 @@ class VirtualizorService implements VirtualizorServiceInterface
             $server->api_key,
             $server->api_pass,
             $server->port ?? 4083,
-            true // is_admin = true for admin API access
+            false // is_admin = false for enduser API access
         );
     }
 
@@ -48,8 +48,20 @@ class VirtualizorService implements VirtualizorServiceInterface
                 );
             }
 
+            // Log the full response for debugging
+            Log::debug('Virtualizor listvs response', ['result' => $result]);
+
+            // Count VPS - check both 'vs' and 'vps' keys
+            $vpsCount = 0;
+            if (isset($result['vs']) && is_array($result['vs'])) {
+                $vpsCount = count($result['vs']);
+            } elseif (isset($result['vps']) && is_array($result['vps'])) {
+                $vpsCount = count($result['vps']);
+            }
+
             return ConnectionResult::success('Connection successful', [
-                'vps_count' => isset($result['vs']) ? count($result['vs']) : 0,
+                'vps_count' => $vpsCount,
+                'raw_keys' => array_keys($result),
             ]);
         } catch (\Exception $e) {
             Log::error('Virtualizor connection test failed', [

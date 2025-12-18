@@ -60,11 +60,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         ->name('servers.test-connection');
     
     // NAT VPS management routes (to be implemented in task 6)
-    Route::resource('nat-vps', \App\Http\Controllers\Admin\NatVpsController::class);
+    Route::resource('nat-vps', \App\Http\Controllers\Admin\NatVpsController::class)
+        ->parameters(['nat-vps' => 'natVps']);
     Route::post('nat-vps/{natVps}/assign', [\App\Http\Controllers\Admin\NatVpsController::class, 'assign'])
         ->name('nat-vps.assign');
     Route::post('nat-vps/{natVps}/unassign', [\App\Http\Controllers\Admin\NatVpsController::class, 'unassign'])
         ->name('nat-vps.unassign');
+    Route::get('nat-vps-import', [\App\Http\Controllers\Admin\NatVpsController::class, 'showImport'])
+        ->name('nat-vps.import');
+    Route::post('nat-vps-import/{server}', [\App\Http\Controllers\Admin\NatVpsController::class, 'importFromServer'])
+        ->name('nat-vps.import.server');
     
     // User management routes (to be implemented in task 7)
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
