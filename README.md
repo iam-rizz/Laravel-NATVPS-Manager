@@ -86,7 +86,7 @@ app/
 
 - [x] Authentication system (login/logout)
 - [x] Admin middleware
-- [ ] Virtualizor API service wrapper
+- [x] Virtualizor API service wrapper
 - [ ] Server CRUD (Admin)
 - [ ] NAT VPS CRUD (Admin)
 - [ ] User management (Admin)
