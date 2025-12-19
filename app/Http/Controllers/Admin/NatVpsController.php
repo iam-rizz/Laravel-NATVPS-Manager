@@ -7,9 +7,10 @@ use App\Models\NatVps;
 use App\Models\Server;
 use App\Models\User;
 use App\Enums\UserRole;
+use App\Services\GeoLocation\GeoLocationService;
 use App\Services\Virtualizor\VirtualizorService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class NatVpsController extends Controller
 {
@@ -78,7 +79,7 @@ class NatVpsController extends Controller
             try {
                 // Get live VPS info from API
                 $liveInfo = $virtualizorService->getVpsInfo($natVps->server, $natVps->vps_id);
-                
+
                 if ($liveInfo) {
                     // Update cached specs
                     $natVps->update([
@@ -99,6 +100,14 @@ class NatVpsController extends Controller
             $apiOffline = true;
         }
 
+        // Fetch server location data if not cached
+        if ($natVps->server && !$natVps->server->location_data) {
+            $geoService = app(GeoLocationService::class);
+            $geoService->getLocationForServer($natVps->server);
+            $natVps->load('server'); // Reload to get updated location
+        }
+
+        // Resource usage will be loaded via AJAX for better page performance
         return view('admin.nat-vps.show', compact('natVps', 'vdfCount', 'liveInfo', 'apiOffline'));
     }
 
@@ -348,6 +357,40 @@ class NatVpsController extends Controller
             return redirect()
                 ->route('admin.nat-vps.show', $natVps)
                 ->with('error', "Failed to {$action} VPS: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get resource usage data for a VPS (AJAX endpoint).
+     */
+    public function resourceUsage(NatVps $natVps, VirtualizorService $virtualizorService): JsonResponse
+    {
+        if (!$natVps->server) {
+            return response()->json([
+                'success' => false,
+                'message' => 'VPS has no associated server.',
+            ], 400);
+        }
+
+        try {
+            $resourceUsage = $virtualizorService->getResourceUsage($natVps->server, $natVps->vps_id);
+
+            if (!$resourceUsage) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unable to fetch resource usage data.',
+                ], 503);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $resourceUsage->toArray(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch resource usage: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

@@ -86,6 +86,49 @@
                                     {{ $liveInfo?->uuid ?? $cachedSpecs['uuid'] ?? 'N/A' }}
                                 </dd>
                             </div>
+                            @php
+                                $osName = $liveInfo?->osName ?? $cachedSpecs['os_name'] ?? null;
+                                $osIcon = $liveInfo?->getOsIcon() ?? 'linux';
+                            @endphp
+                            <div class="flex justify-between items-center">
+                                <dt class="text-sm text-gray-500 dark:text-gray-400">Operating System</dt>
+                                <dd class="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center">
+                                    @if($osName)
+                                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/{{ $osIcon }}/{{ $osIcon }}-original.svg" 
+                                             alt="{{ $osIcon }}" 
+                                             class="w-5 h-5 mr-2"
+                                             onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg';">
+                                        {{ $osName }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
+                            </div>
+                            @php
+                                $serverLocation = $natVps->server?->location_data;
+                                $location = $serverLocation ? $natVps->server->getLocationString() : null;
+                                $isp = $serverLocation['isp'] ?? $serverLocation['org'] ?? null;
+                            @endphp
+                            <div class="flex justify-between items-center">
+                                <dt class="text-sm text-gray-500 dark:text-gray-400">Region</dt>
+                                <dd class="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center">
+                                    @if($location)
+                                        <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                        {{ $location }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
+                            </div>
+                            @if($isp)
+                            <div class="flex justify-between items-center">
+                                <dt class="text-sm text-gray-500 dark:text-gray-400">ISP</dt>
+                                <dd class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $isp }}</dd>
+                            </div>
+                            @endif
                             <div class="flex justify-between">
                                 <dt class="text-sm text-gray-500 dark:text-gray-400">CPU</dt>
                                 <dd class="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -190,6 +233,9 @@
                         @endif
                     </div>
                 </div>
+
+                <!-- Resource Usage Card (loaded via AJAX) -->
+                <x-resource-usage :apiEndpoint="route('admin.nat-vps.resource-usage', $natVps)" :apiOffline="$apiOffline" />
 
                 <!-- Power Actions Card -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg md:col-span-2">
@@ -331,6 +377,31 @@
                     </div>
                 </div>
 
+                <!-- Domain Forwardings Card -->
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg md:col-span-2">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center">
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Domain Forwardings</h3>
+                                <span class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                    {{ $vdfCount ?? 0 }} rules
+                                </span>
+                            </div>
+                            <a href="{{ route('admin.nat-vps.domain-forwarding.index', $natVps) }}" 
+                               class="inline-flex items-center px-3 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                Manage
+                            </a>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            Configure port forwarding (TCP) and domain forwarding (HTTP/HTTPS) rules for this VPS.
+                        </p>
+                    </div>
+                </div>
+                
                 <!-- User Assignment Card -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg md:col-span-2">
                     <div class="p-6">
@@ -383,31 +454,6 @@
                                 </form>
                             </div>
                         @endif
-                    </div>
-                </div>
-
-                <!-- Domain Forwardings Card -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg md:col-span-2">
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <div class="flex items-center">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Domain Forwardings</h3>
-                                <span class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                    {{ $vdfCount ?? 0 }} rules
-                                </span>
-                            </div>
-                            <a href="{{ route('admin.nat-vps.domain-forwarding.index', $natVps) }}" 
-                               class="inline-flex items-center px-3 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                Manage
-                            </a>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                            Configure port forwarding (TCP) and domain forwarding (HTTP/HTTPS) rules for this VPS.
-                        </p>
                     </div>
                 </div>
             </div>

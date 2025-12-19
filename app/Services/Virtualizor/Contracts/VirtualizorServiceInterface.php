@@ -5,6 +5,7 @@ namespace App\Services\Virtualizor\Contracts;
 use App\Models\Server;
 use App\Services\Virtualizor\DTOs\ActionResult;
 use App\Services\Virtualizor\DTOs\ConnectionResult;
+use App\Services\Virtualizor\DTOs\ResourceUsage;
 use App\Services\Virtualizor\DTOs\VpsInfo;
 
 interface VirtualizorServiceInterface
@@ -67,4 +68,9 @@ interface VirtualizorServiceInterface
      * Delete a domain forwarding rule.
      */
     public function deleteDomainForwarding(Server $server, int $vpsId, int $recordId): ActionResult;
+
+    /**
+     * Get resource usage (CPU, RAM, Disk, Bandwidth) for a VPS.
+     */
+    public function getResourceUsage(Server $server, int $vpsId): ?ResourceUsage;
 }

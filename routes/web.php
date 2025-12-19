@@ -81,6 +81,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('nat-vps/{natVps}/poweroff', [\App\Http\Controllers\Admin\NatVpsController::class, 'poweroff'])
         ->name('nat-vps.poweroff');
     
+    // Admin NAT VPS Resource Usage API (async loading)
+    Route::get('nat-vps/{natVps}/resource-usage', [\App\Http\Controllers\Admin\NatVpsController::class, 'resourceUsage'])
+        ->name('nat-vps.resource-usage');
+    
     // Admin Domain Forwarding routes
     Route::get('nat-vps/{natVps}/domain-forwarding', [\App\Http\Controllers\Admin\DomainForwardingController::class, 'index'])
         ->name('nat-vps.domain-forwarding.index');
@@ -118,6 +122,9 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
         Route::post('vps/{natVps}/stop', [\App\Http\Controllers\User\VpsController::class, 'stop'])->name('vps.stop');
         Route::post('vps/{natVps}/restart', [\App\Http\Controllers\User\VpsController::class, 'restart'])->name('vps.restart');
         Route::post('vps/{natVps}/poweroff', [\App\Http\Controllers\User\VpsController::class, 'poweroff'])->name('vps.poweroff');
+        
+        // Resource Usage API (async loading)
+        Route::get('vps/{natVps}/resource-usage', [\App\Http\Controllers\User\VpsController::class, 'resourceUsage'])->name('vps.resource-usage');
         
         // Domain forwarding routes
         Route::get('vps/{natVps}/domain-forwarding', [\App\Http\Controllers\User\DomainForwardingController::class, 'index'])

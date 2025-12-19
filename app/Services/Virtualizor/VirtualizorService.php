@@ -6,6 +6,7 @@ use App\Models\Server;
 use App\Services\Virtualizor\Contracts\VirtualizorServiceInterface;
 use App\Services\Virtualizor\DTOs\ActionResult;
 use App\Services\Virtualizor\DTOs\ConnectionResult;
+use App\Services\Virtualizor\DTOs\ResourceUsage;
 use App\Services\Virtualizor\DTOs\VpsInfo;
 use App\Services\Virtualizor\Exceptions\ConnectionException;
 use Illuminate\Support\Facades\Log;
@@ -116,11 +117,22 @@ class VirtualizorService implements VirtualizorServiceInterface
                 return null;
             }
 
+            // Log response keys for debugging
+            Log::debug('VpsInfo API response keys', [
+                'keys' => array_keys($result),
+                'has_map_address' => isset($result['map_address']),
+            ]);
+
             // Check for 'info' key (enduser API response) or 'vps' key
             $vpsData = $result['info'] ?? $result['vps'] ?? null;
             
             if (empty($vpsData)) {
                 return null;
+            }
+
+            // Merge root-level data (map_address, etc.) into vpsData
+            if (isset($result['map_address'])) {
+                $vpsData['map_address'] = $result['map_address'];
             }
 
             return VpsInfo::fromApiResponse($vpsData);
@@ -531,6 +543,39 @@ class VirtualizorService implements VirtualizorServiceInterface
             ]);
 
             return ActionResult::failure('Failed to update domain forwarding: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResourceUsage(Server $server, int $vpsId): ?ResourceUsage
+    {
+        try {
+            $client = $this->createClient($server);
+
+            // Get monitor data (CPU, RAM, Disk)
+            $monitorData = $client->monitor($vpsId);
+
+            if ($monitorData === false || empty($monitorData)) {
+                return null;
+            }
+
+            // Get bandwidth data
+            $bandwidthData = $client->bandwidth($vpsId);
+
+            return ResourceUsage::fromApiResponse(
+                $monitorData,
+                is_array($bandwidthData) ? $bandwidthData : []
+            );
+        } catch (\Exception $e) {
+            Log::error('Failed to get resource usage', [
+                'server_id' => $server->id,
+                'vps_id' => $vpsId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
         }
     }
 }

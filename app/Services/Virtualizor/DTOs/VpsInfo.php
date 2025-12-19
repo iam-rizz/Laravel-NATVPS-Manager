@@ -15,6 +15,9 @@ class VpsInfo
         public readonly ?int $usedBandwidth = null,
         public readonly ?int $status = null,
         public readonly ?array $ips = null,
+        public readonly ?string $osName = null,
+        public readonly ?string $osDistro = null,
+        public readonly ?array $mapAddress = null,
         public readonly ?array $rawData = null
     ) {}
 
@@ -47,6 +50,13 @@ class VpsInfo
             $usedBandwidth = $vpsData['used_bandwidth'] ?? $data['used_bandwidth'] ?? null;
         }
         
+        // OS info
+        $osName = $vpsData['os_name'] ?? $data['os_name'] ?? $data['os'] ?? null;
+        $osDistro = $vpsData['os_distro'] ?? $data['os_distro'] ?? $data['distro'] ?? null;
+        
+        // Map/Location info
+        $mapAddress = $data['map_address'] ?? $vpsData['map_address'] ?? null;
+        
         return new self(
             vpsId: (int) ($data['vpsid'] ?? $vpsData['vpsid'] ?? $data['vid'] ?? 0),
             uuid: $vpsData['uuid'] ?? $data['uuid'] ?? $data['vps_uuid'] ?? null,
@@ -58,6 +68,9 @@ class VpsInfo
             usedBandwidth: isset($usedBandwidth) ? (int) $usedBandwidth : null,
             status: isset($data['status']) ? (int) $data['status'] : null,
             ips: $data['ips'] ?? $data['ip'] ?? $vpsData['ips'] ?? null,
+            osName: $osName,
+            osDistro: $osDistro,
+            mapAddress: $mapAddress,
             rawData: $data
         );
     }
@@ -78,6 +91,49 @@ class VpsInfo
             'used_bandwidth' => $this->usedBandwidth,
             'status' => $this->status,
             'ips' => $this->ips,
+            'os_name' => $this->osName,
+            'os_distro' => $this->osDistro,
+            'map_address' => $this->mapAddress,
         ];
+    }
+
+    /**
+     * Get OS logo/icon name based on distro.
+     */
+    public function getOsIcon(): string
+    {
+        $distro = strtolower($this->osDistro ?? $this->osName ?? '');
+        
+        return match (true) {
+            str_contains($distro, 'ubuntu') => 'ubuntu',
+            str_contains($distro, 'debian') => 'debian',
+            str_contains($distro, 'centos') => 'centos',
+            str_contains($distro, 'rocky') => 'rocky',
+            str_contains($distro, 'alma') => 'almalinux',
+            str_contains($distro, 'fedora') => 'fedora',
+            str_contains($distro, 'arch') => 'arch',
+            str_contains($distro, 'windows') => 'windows',
+            str_contains($distro, 'freebsd') => 'freebsd',
+            str_contains($distro, 'opensuse'), str_contains($distro, 'suse') => 'opensuse',
+            str_contains($distro, 'rhel'), str_contains($distro, 'redhat') => 'redhat',
+            default => 'linux',
+        };
+    }
+
+    /**
+     * Get location display string.
+     */
+    public function getLocationString(): ?string
+    {
+        if (!$this->mapAddress) {
+            return null;
+        }
+        
+        $parts = array_filter([
+            $this->mapAddress['city'] ?? null,
+            $this->mapAddress['country_code'] ?? null,
+        ]);
+        
+        return !empty($parts) ? implode(', ', $parts) : null;
     }
 }
