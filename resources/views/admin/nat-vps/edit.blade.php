@@ -124,8 +124,6 @@
                                 <dd class="text-gray-900 dark:text-gray-100">{{ $natVps->created_at->format('M d, Y H:i') }}</dd>
                                 <dt class="text-gray-500 dark:text-gray-400">Last Updated:</dt>
                                 <dd class="text-gray-900 dark:text-gray-100">{{ $natVps->updated_at->format('M d, Y H:i') }}</dd>
-                                <dt class="text-gray-500 dark:text-gray-400">Domain Forwardings:</dt>
-                                <dd class="text-gray-900 dark:text-gray-100">{{ $natVps->domainForwardings()->count() }}</dd>
                             </dl>
                         </div>
 

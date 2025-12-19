@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\DomainForwarding;
 use App\Models\NatVps;
-use App\Enums\DomainProtocol;
 use App\Services\Virtualizor\VirtualizorService;
 use Illuminate\Http\Request;
 
@@ -122,11 +120,6 @@ class DomainForwardingController extends Controller
         if (!$result->success) {
             return redirect()->back()->with('error', $result->message);
         }
-
-        // Also delete local record if exists
-        DomainForwarding::where('nat_vps_id', $natVps->id)
-            ->where('virtualizor_record_id', $recordId)
-            ->delete();
 
         return redirect()->back()->with('success', 'Domain forwarding rule deleted successfully.');
     }

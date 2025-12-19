@@ -68,7 +68,7 @@ class NatVpsController extends Controller
      */
     public function show(NatVps $natVps, VirtualizorService $virtualizorService)
     {
-        $natVps->load(['server', 'user', 'domainForwardings']);
+        $natVps->load(['server', 'user']);
 
         $liveInfo = null;
         $apiOffline = false;
@@ -153,9 +153,6 @@ class NatVpsController extends Controller
     public function destroy(NatVps $natVps)
     {
         $hostname = $natVps->hostname;
-
-        // Delete associated domain forwardings
-        $natVps->domainForwardings()->delete();
 
         $natVps->delete();
 

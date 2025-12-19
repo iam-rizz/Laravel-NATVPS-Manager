@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class NatVps extends Model
 {
@@ -66,11 +66,4 @@ class NatVps extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the domain forwarding rules for this NAT VPS.
-     */
-    public function domainForwardings(): HasMany
-    {
-        return $this->hasMany(DomainForwarding::class);
-    }
 }

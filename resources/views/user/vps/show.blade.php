@@ -175,7 +175,7 @@
                             <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">SSH Command:</p>
                                 <code class="block p-2 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono text-gray-800 dark:text-gray-200 break-all">
-                                    ssh {{ $natVps->ssh_username }}@{{ $natVps->server->ip_address }} -p {{ $natVps->ssh_port ?? 22 }}
+                                    ssh {{ $natVps->ssh_username . '@' . $natVps->server->ip_address }} -p {{ $natVps->ssh_port ?? 22 }}
                                 </code>
                             </div>
                         @endif

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\DomainForwarding;
 use App\Models\NatVps;
 use App\Services\Virtualizor\VirtualizorService;
 use Illuminate\Http\RedirectResponse;

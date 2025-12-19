@@ -112,11 +112,18 @@ class VirtualizorService implements VirtualizorServiceInterface
             $client = $this->createClient($server);
             $result = $client->vpsinfo($vpsId);
 
-            if ($result === false || empty($result['vps'])) {
+            if ($result === false) {
                 return null;
             }
 
-            return VpsInfo::fromApiResponse($result['vps']);
+            // Check for 'info' key (enduser API response) or 'vps' key
+            $vpsData = $result['info'] ?? $result['vps'] ?? null;
+            
+            if (empty($vpsData)) {
+                return null;
+            }
+
+            return VpsInfo::fromApiResponse($vpsData);
         } catch (\Exception $e) {
             Log::error('Failed to get VPS info', [
                 'server_id' => $server->id,

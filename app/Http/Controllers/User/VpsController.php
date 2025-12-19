@@ -92,6 +92,9 @@ class VpsController extends Controller
      */
     public function show(NatVps $natVps): View
     {
+        // Load server relation for SSH command display
+        $natVps->load('server');
+        
         $liveInfo = null;
         $apiOffline = false;
 
