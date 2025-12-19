@@ -697,7 +697,7 @@ class ActionResult {
 
 - [x] VPS resource usage graphs (CPU, RAM, Network)
 - [ ] Email notifications for VPS events
-- [ ] API rate limiting and request throttling
+- [x] API rate limiting and request throttling
 - [x] Improved error messages and user feedback (Toastify)
 
 ### Version 1.2 (Planned)
