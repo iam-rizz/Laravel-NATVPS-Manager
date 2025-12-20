@@ -1,6 +1,10 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 import Toastify from 'toastify-js';
+import ThemeManager from './theme';
+
+// Initialize theme manager immediately to prevent flash
+ThemeManager.init();
 
 window.Alpine = Alpine;
 Alpine.start();

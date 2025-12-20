@@ -9,6 +9,8 @@ return [
     'settings' => 'Pengaturan',
     'my_vps' => 'VPS Saya',
     'logout' => 'Keluar',
+    'manage_virtualizor_servers' => 'Kelola Server Virtualizor',
+    'manage_users' => 'Kelola Pengguna',
 
     // Auth
     'login' => 'Masuk',
@@ -17,7 +19,8 @@ return [
     'remember_me' => 'Ingat saya',
     'forgot_password' => 'Lupa kata sandi?',
     'login_button' => 'Masuk',
-    'welcome_back' => 'Selamat datang kembali, :name!',
+    'welcome_back' => 'Selamat datang kembali',
+    'login_subtitle' => 'Masuk ke akun Anda untuk melanjutkan',
     'logout_success' => 'Anda telah berhasil keluar.',
     'invalid_credentials' => 'Email atau kata sandi salah. Silakan coba lagi.',
 
@@ -52,6 +55,9 @@ return [
     'test_connection' => 'Tes Koneksi',
     'connection_success' => 'Koneksi berhasil',
     'connection_failed' => 'Koneksi gagal',
+    'no_servers' => 'Tidak ada server',
+    'get_started_add_server' => 'Mulai dengan menambahkan server Virtualizor baru.',
+    'manage_servers_desc' => 'Kelola server Virtualizor yang terhubung ke sistem',
 
     // VPS
     'vps_list' => 'Daftar VPS',
@@ -74,6 +80,13 @@ return [
     'assign_user' => 'Tugaskan Pengguna',
     'unassign_user' => 'Hapus Penugasan',
     'no_vps_assigned' => 'Anda belum memiliki VPS yang ditugaskan.',
+    'add_nat_vps' => 'Tambah NAT VPS',
+    'import_from_virtualizor' => 'Impor dari Virtualizor',
+    'manage_nat_vps_desc' => 'Kelola semua instance NAT VPS di seluruh server Anda',
+    'no_nat_vps' => 'Tidak ada instance NAT VPS',
+    'no_nat_vps_desc' => 'Mulai dengan menambahkan NAT VPS baru.',
+    'assigned_user' => 'Pengguna Ditugaskan',
+    'server' => 'Server',
 
     // Power Actions
     'power_actions' => 'Kontrol Daya',
@@ -250,6 +263,11 @@ return [
     '2fa_not_enabled' => '2FA tidak aktif di akun Anda.',
     '2fa_disable_desc' => 'Menonaktifkan 2FA akan menghapus lapisan keamanan tambahan dari akun Anda.',
     '2fa_disable_confirm' => 'Apakah Anda yakin ingin menonaktifkan autentikasi dua faktor?',
+    '2fa_view_codes' => 'Lihat Kode Pemulihan',
+    '2fa_hide_codes' => 'Sembunyikan Kode Pemulihan',
+    '2fa_confirm_view' => 'Konfirmasi Kata Sandi',
+    '2fa_confirm_view_desc' => 'Masukkan kata sandi Anda untuk melihat kode pemulihan',
+    '2fa_no_codes' => 'Tidak ada kode pemulihan tersedia',
     'security' => 'Keamanan',
     'or' => 'atau',
 
@@ -305,4 +323,46 @@ return [
     'audit_action_server_connection_test' => 'Koneksi server diuji',
     'audit_action_domain_forwarding_created' => 'Penerusan domain dibuat',
     'audit_action_domain_forwarding_deleted' => 'Penerusan domain dihapus',
+
+    // Theme
+    'management' => 'Manajemen',
+    'close' => 'Tutup',
+    'testing_connection' => 'Menguji Koneksi...',
+    'please_wait' => 'Mohon tunggu sementara kami menguji koneksi.',
+    'connection_successful' => 'Koneksi Berhasil',
+    'unexpected_error' => 'Terjadi kesalahan yang tidak terduga.',
+    'never' => 'Belum pernah',
+    'test' => 'Tes',
+    'name' => 'Nama',
+    'role' => 'Peran',
+    'created' => 'Dibuat',
+
+    // Profile
+    'profile' => 'Profil',
+    'profile_information' => 'Informasi Profil',
+    'profile_information_desc' => 'Perbarui informasi profil dan alamat email akun Anda.',
+    'profile_updated' => 'Profil berhasil diperbarui.',
+    'change_password' => 'Ubah Kata Sandi',
+    'change_password_desc' => 'Pastikan akun Anda menggunakan kata sandi yang panjang dan acak untuk keamanan.',
+    'current_password' => 'Kata Sandi Saat Ini',
+    'new_password' => 'Kata Sandi Baru',
+    'confirm_password' => 'Konfirmasi Kata Sandi',
+    'update_password' => 'Perbarui Kata Sandi',
+    'password_changed' => 'Kata sandi berhasil diubah.',
+    '2fa_profile_desc' => 'Tambahkan keamanan ekstra ke akun Anda menggunakan autentikasi dua faktor.',
+    '2fa_enabled_desc' => 'Akun Anda dilindungi dengan autentikasi dua faktor.',
+    '2fa_disabled_desc' => 'Aktifkan autentikasi dua faktor untuk keamanan yang lebih baik.',
+
+    // Forgot Password
+    'forgot_password_title' => 'Lupa Kata Sandi',
+    'forgot_password_desc' => 'Masukkan alamat email Anda dan kami akan mengirimkan link untuk mereset kata sandi.',
+    'send_reset_link' => 'Kirim Link Reset',
+    'back_to_login' => 'Kembali ke Login',
+    'password_reset_link_sent' => 'Jika akun dengan email tersebut ada, kami telah mengirimkan link reset kata sandi.',
+    'reset_password_title' => 'Reset Kata Sandi',
+    'reset_password_desc' => 'Masukkan kata sandi baru Anda di bawah ini.',
+    'reset_password' => 'Reset Kata Sandi',
+    'password_reset_success' => 'Kata sandi Anda berhasil direset. Anda sekarang dapat masuk.',
+    'invalid_reset_token' => 'Link reset kata sandi ini tidak valid atau sudah kedaluwarsa.',
+    'reset_token_expired' => 'Link reset kata sandi ini sudah kedaluwarsa. Silakan minta yang baru.',
 ];

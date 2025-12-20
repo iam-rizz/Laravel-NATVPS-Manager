@@ -186,4 +186,37 @@ class TwoFactorController extends Controller
         return redirect()->route('two-factor.recovery-codes')
             ->with('success', __('app.2fa_codes_regenerated'));
     }
+
+    /**
+     * View recovery codes after password confirmation.
+     * Returns JSON response for AJAX request.
+     */
+    public function viewRecoveryCodes(Request $request)
+    {
+        $request->validate([
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = Auth::user();
+
+        // Verify password
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('app.2fa_invalid_password') ?? 'Invalid password'
+            ], 422);
+        }
+
+        // Check if 2FA is enabled
+        if (!$user->hasTwoFactorEnabled()) {
+            return response()->json([
+                'success' => false,
+                'message' => __('app.2fa_not_enabled') ?? '2FA is not enabled'
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true
+        ]);
+    }
 }

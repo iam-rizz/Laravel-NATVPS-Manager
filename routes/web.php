@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Admin\AuditLogController;
@@ -52,6 +54,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
+    
+    // Forgot Password
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->name('password.request');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+    Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
 /*
@@ -98,6 +106,11 @@ Route::middleware('auth')->group(function () {
         }
         return redirect()->route('user.dashboard')->with($flashData);
     })->name('dashboard');
+    
+    // Profile routes
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 /*
@@ -119,6 +132,8 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
         ->name('two-factor.recovery-codes');
     Route::post('two-factor/recovery-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])
         ->name('two-factor.recovery-codes.regenerate');
+    Route::post('two-factor/recovery-codes/view', [TwoFactorController::class, 'viewRecoveryCodes'])
+        ->name('two-factor.recovery-codes.view');
 });
 
 /*

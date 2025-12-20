@@ -107,6 +107,7 @@ NAT VPS Manager addresses these challenges by providing:
 - **Notification Toggles** - Enable/disable specific email notifications
 - **Email Templates** - Customizable HTML email templates with variables
 - **Resource Monitoring** - Configure automatic VPS resource checking
+- **Audit Settings** - Configure log retention period
 
 #### Email Notifications
 - **VPS Assignment** - Notify users when VPS is assigned/unassigned
@@ -114,6 +115,14 @@ NAT VPS Manager addresses these challenges by providing:
 - **Resource Warnings** - Automatic alerts when CPU/RAM/Disk exceeds threshold
 - **Welcome Email** - Customizable welcome message for new users
 - **Template Variables** - Dynamic content with {{variable}} placeholders
+
+#### Audit Logging (v1.3)
+- **Comprehensive Tracking** - Log all user activities (login, logout, VPS actions, user management)
+- **Filterable Viewer** - Filter by user, action type, date range
+- **Detailed Entries** - View old/new values comparison for changes
+- **CSV Export** - Export audit logs for compliance and reporting
+- **Configurable Retention** - Set automatic cleanup period (30-365 days)
+- **IP & User Agent** - Track request origin and browser information
 
 ### User Portal
 
@@ -152,10 +161,38 @@ NAT VPS Manager addresses these challenges by providing:
 - **Visual Indicators** - Progress bars and percentages
 - **Historical Data** - Monthly usage from API
 
+#### Profile Management (v1.3)
+- **Edit Profile** - Update name and email address
+- **Change Password** - Secure password change with current password verification
+- **2FA Management** - Enable/disable two-factor authentication from profile
+
+### Authentication & Security
+
+#### Two-Factor Authentication (v1.3)
+- **TOTP Support** - Compatible with Google Authenticator, Authy, Microsoft Authenticator
+- **QR Code Setup** - Easy scanning for authenticator apps
+- **Manual Entry** - Secret key for manual configuration
+- **Recovery Codes** - 8 one-time backup codes
+- **Secure Viewing** - Password confirmation to view recovery codes
+- **Code Regeneration** - Generate new recovery codes anytime
+- **Rate Limiting** - 5 attempts per minute to prevent brute force
+
+#### Password Reset (v1.3)
+- **Email-Based Reset** - Secure password reset via email link
+- **Token Expiration** - Reset links expire after 60 minutes
+- **Rate Limiting** - Prevent abuse of reset functionality
+
+#### Multi-Language Support (v1.3)
+- **English** - Full English translation
+- **Indonesian** - Complete Bahasa Indonesia translation
+- **Language Switcher** - Easy switching on login page
+- **Session Persistence** - Language preference saved per session
+
 ### Technical Features
 
 #### Security
 - **Role-Based Access Control** - Granular permission system
+- **Two-Factor Authentication** - TOTP-based 2FA with recovery codes
 - **Encrypted Storage** - Sensitive data encrypted at rest
 - **CSRF Protection** - All forms protected against CSRF
 - **SQL Injection Prevention** - Eloquent ORM parameterized queries
@@ -163,6 +200,7 @@ NAT VPS Manager addresses these challenges by providing:
 - **Session Security** - Secure session handling
 - **API Rate Limiting** - Prevent abuse with configurable limits
   - Login: 5 attempts per minute
+  - 2FA Verification: 5 attempts per minute
   - VPS Power Actions: 10 per minute per user
 
 #### Performance
@@ -177,11 +215,21 @@ NAT VPS Manager addresses these challenges by providing:
 - **Logging** - Detailed logs for debugging
 - **Database Transactions** - Data integrity protection
 
+#### User Interface (v1.3)
+- **Modern Design** - Clean, professional interface with Poppins/Jost typography
+- **Dark/Light Mode** - Toggle between themes with localStorage persistence
+- **Fixed Sidebar** - Always-visible navigation on desktop
+- **Mobile Drawer** - Responsive sidebar for mobile devices
+- **Glassmorphism Effects** - Modern visual effects with backdrop blur
+- **Toast Notifications** - Beautiful feedback messages with progress bars
+- **Consistent Styling** - CSS custom properties for theme consistency
+
 #### Developer Experience
 - **Service Layer Architecture** - Clean separation of concerns
 - **DTO Pattern** - Type-safe data transfer objects
 - **Interface Contracts** - Dependency injection ready
 - **PSR-12 Compliant** - Consistent code style
+- **Property-Based Testing** - QuickCheck-style tests for critical functions
 
 ---
 
@@ -193,15 +241,15 @@ NAT VPS Manager addresses these challenges by providing:
 │  NAT VPS Manager                              Admin ▼       │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
-│  │ Servers  │  │   VPS    │  │  Users   │  │  Active  │   │
-│  │    3     │  │    12    │  │    8     │  │    10    │   │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐     │
+│  │ Servers  │  │   VPS    │  │  Users   │  │  Active  │     │
+│  │    3     │  │    12    │  │    8     │  │    10    │     │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘     │
 │                                                             │
 │  Recent Activity                                            │
-│  ├─ VPS test.dev assigned to user@example.com              │
-│  ├─ Server NAT-SG-01 added                                 │
-│  └─ User john@example.com created                          │
+│  ├─ VPS test.dev assigned to user@example.com               │
+│  ├─ Server NAT-SG-01 added                                  │
+│  └─ User john@example.com created                           │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -212,19 +260,19 @@ NAT VPS Manager addresses these challenges by providing:
 │  VPS: myserver.dev                           ● Running      │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  VPS Specifications          │  SSH Credentials            │
-│  ─────────────────────────   │  ────────────────────────   │
-│  Hostname    myserver.dev    │  Username    root           │
-│  VPS ID      103             │  Password    ••••••••       │
-│  CPU         2 Core(s)       │  SSH Port    30322          │
-│  RAM         6000 MB         │                             │
-│  Disk        40 GB           │  SSH Command:               │
-│  Bandwidth   4 / 1000 GB     │  ssh root@1.2.3.4 -p 30322  │
-│  Server      NAT-SG-01       │                             │
+│  VPS Specifications          │  SSH Credentials             │
+│  ─────────────────────────   │  ────────────────────────    │
+│  Hostname    myserver.dev    │  Username    root            │
+│  VPS ID      103             │  Password    ••••••••        │
+│  CPU         2 Core(s)       │  SSH Port    30322           │
+│  RAM         6000 MB         │                              │
+│  Disk        40 GB           │  SSH Command:                │
+│  Bandwidth   4 / 1000 GB     │  ssh root@1.2.3.4 -p 30322   │
+│  Server      NAT-SG-01       │                              │
 │                                                             │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌───────────┐        │
-│  │  Start  │ │  Stop   │ │ Restart │ │ Power Off │        │
-│  └─────────┘ └─────────┘ └─────────┘ └───────────┘        │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌───────────┐          │
+│  │  Start  │ │  Stop   │ │ Restart │ │ Power Off │          │
+│  └─────────┘ └─────────┘ └─────────┘ └───────────┘          │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -239,21 +287,31 @@ NAT VPS Manager addresses these challenges by providing:
 | **Framework** | Laravel | 12.x |
 | **Frontend** | Tailwind CSS | 3.x |
 | **JavaScript** | Alpine.js | 3.x |
-| **Build Tool** | Vite | 5.x |
+| **Build Tool** | Vite | 6.x |
 | **Database** | MySQL / SQLite | 8.0+ / 3.x |
 | **API** | Virtualizor Enduser API | - |
+| **2FA** | Google2FA | 2.x |
 
 ### Dependencies
 
 #### PHP Packages
 - `laravel/framework` - Core framework
 - `laravel/tinker` - REPL for debugging
+- `pragmarx/google2fa-laravel` - Two-factor authentication (TOTP)
+- `bacon/bacon-qr-code` - QR code generation for 2FA setup
 
 #### NPM Packages
 - `tailwindcss` - Utility-first CSS
 - `alpinejs` - Lightweight JS framework
 - `autoprefixer` - CSS vendor prefixing
 - `vite` - Frontend build tool
+- `toastify-js` - Toast notifications
+
+#### Dev Dependencies
+- `phpunit/phpunit` - Unit testing
+- `steos/quickcheck` - Property-based testing
+- `fakerphp/faker` - Test data generation
+- `laravel/pint` - Code style fixer
 
 ---
 
@@ -549,11 +607,15 @@ Laravel-NATVPS-Manager/
 ├── app/
 │   ├── Console/
 │   │   └── Commands/
-│   │       └── MonitorVpsResources.php  # Scheduled resource monitoring
+│   │       ├── MonitorVpsResources.php  # Scheduled resource monitoring
+│   │       └── CleanupAuditLogs.php     # Audit log retention cleanup
 │   │
 │   ├── Enums/
-│   │   ├── UserRole.php                 # Admin/User role enum
-│   │   └── DomainProtocol.php           # HTTP/HTTPS/TCP enum
+│   │   └── UserRole.php                 # Admin/User role enum
+│   │
+│   ├── Events/
+│   │   ├── TwoFactorSuccess.php         # 2FA success event
+│   │   └── TwoFactorFailed.php          # 2FA failure event
 │   │
 │   ├── Http/
 │   │   ├── Controllers/
@@ -562,28 +624,48 @@ Laravel-NATVPS-Manager/
 │   │   │   │   ├── ServerController.php
 │   │   │   │   ├── NatVpsController.php
 │   │   │   │   ├── UserController.php
+│   │   │   │   ├── AuditLogController.php     # Audit log viewer
 │   │   │   │   ├── SettingController.php      # Settings management
 │   │   │   │   └── EmailTemplateController.php # Email templates
 │   │   │   │
-│   │   │   └── User/
-│   │   │       ├── DashboardController.php
-│   │   │       ├── VpsController.php
-│   │   │       └── DomainForwardingController.php
+│   │   │   ├── Auth/
+│   │   │   │   ├── AuthController.php         # Login/Logout
+│   │   │   │   ├── ProfileController.php      # Profile management
+│   │   │   │   ├── ForgotPasswordController.php # Password reset
+│   │   │   │   ├── TwoFactorController.php    # 2FA setup/management
+│   │   │   │   └── TwoFactorChallengeController.php # 2FA verification
+│   │   │   │
+│   │   │   ├── User/
+│   │   │   │   ├── DashboardController.php
+│   │   │   │   ├── VpsController.php
+│   │   │   │   └── DomainForwardingController.php
+│   │   │   │
+│   │   │   └── LanguageController.php   # Language switching
 │   │   │
 │   │   └── Middleware/
-│   │       └── AdminMiddleware.php      # Admin access control
+│   │       ├── AdminMiddleware.php      # Admin access control
+│   │       ├── SetLocale.php            # Language middleware
+│   │       ├── EnsureTwoFactorAuthenticated.php # 2FA middleware
+│   │       └── VpsAccessMiddleware.php  # VPS ownership check
+│   │
+│   ├── Listeners/
+│   │   └── AuthEventListener.php        # Auth event logging
 │   │
 │   ├── Models/
-│   │   ├── User.php                     # User with role attribute
+│   │   ├── User.php                     # User with 2FA support
 │   │   ├── Server.php                   # Virtualizor server config
 │   │   ├── NatVps.php                   # NAT VPS instance
-│   │   ├── DomainForwarding.php         # VDF forwarding rules
+│   │   ├── AuditLog.php                 # Activity audit log
 │   │   ├── Setting.php                  # Dynamic settings model
 │   │   └── EmailTemplate.php            # Email template model
 │   │
 │   ├── Services/
 │   │   ├── SettingService.php           # Settings helper service
 │   │   ├── MailService.php              # Email notification service
+│   │   ├── AuditLogService.php          # Audit logging service
+│   │   ├── TwoFactorAuthService.php     # 2FA service (TOTP, recovery codes)
+│   │   ├── GeoLocation/
+│   │   │   └── GeoLocationService.php   # IP geolocation
 │   │   └── Virtualizor/
 │   │       ├── Contracts/
 │   │       │   └── VirtualizorServiceInterface.php
@@ -612,6 +694,12 @@ Laravel-NATVPS-Manager/
 │       ├── SettingsSeeder.php           # Default settings
 │       └── EmailTemplateSeeder.php      # Default email templates
 │
+├── lang/
+│   ├── en/
+│   │   └── app.php                      # English translations
+│   └── id/
+│       └── app.php                      # Indonesian translations
+│
 ├── resources/
 │   ├── views/
 │   │   ├── admin/                       # Admin panel views
@@ -619,35 +707,55 @@ Laravel-NATVPS-Manager/
 │   │   │   ├── servers/
 │   │   │   ├── nat-vps/
 │   │   │   ├── users/
+│   │   │   ├── audit-logs/              # Audit log views
+│   │   │   │   ├── index.blade.php
+│   │   │   │   └── show.blade.php
 │   │   │   └── settings/                # Settings views
 │   │   │       ├── general.blade.php
 │   │   │       ├── mail.blade.php
 │   │   │       ├── notifications.blade.php
+│   │   │       ├── audit.blade.php
 │   │   │       └── email-templates/
+│   │   │
+│   │   ├── auth/                        # Authentication views
+│   │   │   ├── login.blade.php
+│   │   │   ├── forgot-password.blade.php
+│   │   │   ├── reset-password.blade.php
+│   │   │   ├── profile/
+│   │   │   │   └── edit.blade.php       # Profile management
+│   │   │   └── two-factor/              # 2FA views
+│   │   │       ├── setup.blade.php
+│   │   │       ├── challenge.blade.php
+│   │   │       └── recovery-codes.blade.php
 │   │   │
 │   │   ├── user/                        # User portal views
 │   │   │   ├── dashboard.blade.php
 │   │   │   └── vps/
 │   │   │
 │   │   ├── components/                  # Blade components
+│   │   │   ├── app-layout.blade.php     # Main app layout
+│   │   │   ├── guest-layout.blade.php   # Guest layout
+│   │   │   ├── sidebar.blade.php        # Sidebar navigation
+│   │   │   └── resource-usage.blade.php # VPS resource display
+│   │   │
 │   │   └── layouts/
-│   │       └── app.blade.php            # Main layout with toast
+│   │       └── app.blade.php            # Legacy layout
 │   │
 │   ├── css/
-│   │   └── app.css                      # Tailwind imports
+│   │   └── app.css                      # Tailwind + custom styles
 │   │
 │   └── js/
-│       └── app.js                       # Alpine.js setup
+│       ├── app.js                       # Alpine.js + toast setup
+│       └── theme.js                     # Dark/light mode toggle
 │
 ├── routes/
-│   ├── web.php                          # Web routes
-│   └── auth.php                         # Authentication routes
+│   └── web.php                          # All web routes
 │
 ├── public/
 │   └── index.php                        # Application entry
 │
 ├── storage/                             # Logs, cache, sessions
-├── tests/                               # PHPUnit tests
+├── tests/                               # PHPUnit + property-based tests
 ├── .env.example                         # Environment template
 ├── composer.json                        # PHP dependencies
 ├── package.json                         # Node dependencies
@@ -763,7 +871,7 @@ class ActionResult {
 
 ## Roadmap
 
-### Version 1.0 (Current)
+### Version 1.0 ✅
 
 - [x] User authentication with role-based access
 - [x] Admin dashboard with system overview
@@ -784,7 +892,7 @@ class ActionResult {
 - [x] API rate limiting and request throttling
 - [x] Improved error messages and user feedback (Toast notifications with progress bar)
 
-### Version 1.2 (Current)
+### Version 1.2 ✅
 
 - [x] **Admin Settings Panel** - Dynamic configuration from database
   - [x] General Settings (App name, logo, favicon, timezone)
@@ -802,25 +910,93 @@ class ActionResult {
   - [x] Configurable check interval (5-60 minutes)
   - [x] Configurable warning thresholds (CPU/RAM/Disk %)
   - [x] Warning cooldown to prevent email spam
-- [x] **Login/Logout Notifications** - Toast messages for authentication events
+- [x] Login/Logout Notifications - Toast messages for authentication events
 
-### Version 1.3 (Planned)
+### Version 1.3 (Current) ✅
 
-- [x] Multi-language support (English, Indonesian)
-- [x] Two-factor authentication (2FA)
-- [x] User activity audit logging
-- [ ] Update Themes (Simple, modern, elegant, profesional) (Dark/Light mode)
+- [x] **Multi-language Support**
+  - [x] English and Indonesian language packs
+  - [x] Language switcher on login page
+  - [x] Persistent language preference per session
+  - [x] All UI elements translated
+- [x] **Two-Factor Authentication (2FA)**
+  - [x] TOTP-based authentication (Google Authenticator, Authy compatible)
+  - [x] QR code setup with manual entry option
+  - [x] 8 recovery codes with secure storage
+  - [x] Password-protected recovery code viewing
+  - [x] Recovery code regeneration
+  - [x] Rate limiting on 2FA verification (5 attempts/minute)
+- [x] **User Activity Audit Logging**
+  - [x] Comprehensive activity tracking (login, logout, VPS actions, user management)
+  - [x] Filterable audit log viewer (by user, action, date range)
+  - [x] Detailed log entries with old/new values comparison
+  - [x] CSV export functionality
+  - [x] Configurable retention period
+  - [x] IP address and user agent tracking
+- [x] **Modern Theme Update**
+  - [x] Redesigned UI with Poppins/Jost typography
+  - [x] Dark/Light mode toggle with localStorage persistence
+  - [x] Fixed sidebar navigation with mobile drawer
+  - [x] Glassmorphism effects and smooth transitions
+  - [x] Improved form styling with better contrast
+  - [x] Consistent color palette using CSS custom properties
+  - [x] Mobile-responsive design improvements
+- [x] **Profile Management**
+  - [x] Edit profile information (name, email)
+  - [x] Change password with current password verification
+  - [x] 2FA management from profile page
+- [x] **Forgot Password**
+  - [x] Email-based password reset
+  - [x] Secure token validation with expiration
+  - [x] Rate limiting on reset requests
 
-### Version 2.0 (Future)
+### Version 2.0 (Planned)
 
-- [ ] VPS console access (noVNC integration)
-- [ ] Automated backup management
-- [ ] Billing system integration
-- [ ] REST API for external integrations
-- [ ] Custom branding and white-label support
-- [ ] Reseller panel with sub-user management
-- [ ] Automated VPS provisioning
-- [ ] Resource usage alerts and notifications
+- [ ] **VPS Console Access**
+  - [ ] noVNC integration for web-based console
+  - [ ] Secure WebSocket proxy
+  - [ ] Session timeout and security controls
+- [ ] **Automated Backup Management**
+  - [ ] Scheduled backup configuration
+  - [ ] Backup restore functionality
+  - [ ] Backup retention policies
+- [ ] **Billing System Integration**
+  - [ ] Invoice generation
+  - [ ] Payment gateway integration (Stripe, PayPal)
+  - [ ] Usage-based billing
+  - [ ] Credit system
+- [ ] **REST API for External Integrations**
+  - [ ] API key authentication
+  - [ ] Rate limiting per API key
+  - [ ] Webhook notifications
+  - [ ] OpenAPI/Swagger documentation
+- [ ] **Custom Branding & White-label**
+  - [ ] Custom logo and favicon upload
+  - [ ] Custom color themes
+  - [ ] Custom email templates with branding
+  - [ ] Remove "Powered by" attribution option
+- [ ] **Reseller Panel**
+  - [ ] Sub-user management
+  - [ ] Resource allocation limits
+  - [ ] Reseller-specific pricing
+  - [ ] Commission tracking
+- [ ] **Automated VPS Provisioning**
+  - [ ] Template-based VPS creation
+  - [ ] Auto-assignment to users
+  - [ ] Post-provisioning scripts
+- [ ] **Advanced Monitoring**
+  - [ ] Historical resource usage graphs
+  - [ ] Custom alert thresholds per VPS
+  - [ ] Slack/Discord/Telegram notifications
+  - [ ] Uptime monitoring
+- [ ] **Bulk Operations**
+  - [ ] Bulk VPS power actions
+  - [ ] Bulk user assignment
+  - [ ] Bulk import/export
+- [ ] **Data Export**
+  - [ ] Export VPS list to CSV/Excel
+  - [ ] Export user data
+  - [ ] Export audit logs to PDF
 
 ---
 

@@ -9,6 +9,8 @@ return [
     'settings' => 'Settings',
     'my_vps' => 'My VPS',
     'logout' => 'Log Out',
+    'manage_virtualizor_servers' => 'Manage Virtualizor Servers',
+    'manage_users' => 'Manage Users',
 
     // Auth
     'login' => 'Login',
@@ -17,7 +19,8 @@ return [
     'remember_me' => 'Remember me',
     'forgot_password' => 'Forgot your password?',
     'login_button' => 'Log in',
-    'welcome_back' => 'Welcome back, :name!',
+    'welcome_back' => 'Welcome back',
+    'login_subtitle' => 'Sign in to your account to continue',
     'logout_success' => 'You have been logged out successfully.',
     'invalid_credentials' => 'Invalid email or password. Please try again.',
 
@@ -52,6 +55,9 @@ return [
     'test_connection' => 'Test Connection',
     'connection_success' => 'Connection successful',
     'connection_failed' => 'Connection failed',
+    'no_servers' => 'No servers',
+    'get_started_add_server' => 'Get started by adding a new Virtualizor server.',
+    'manage_servers_desc' => 'Manage Virtualizor servers connected to the system',
 
     // VPS
     'vps_list' => 'VPS List',
@@ -74,6 +80,13 @@ return [
     'assign_user' => 'Assign User',
     'unassign_user' => 'Unassign User',
     'no_vps_assigned' => 'You don\'t have any VPS instances assigned to you.',
+    'add_nat_vps' => 'Add NAT VPS',
+    'import_from_virtualizor' => 'Import from Virtualizor',
+    'manage_nat_vps_desc' => 'Manage all NAT VPS instances across your servers',
+    'no_nat_vps' => 'No NAT VPS instances',
+    'no_nat_vps_desc' => 'Get started by adding a new NAT VPS.',
+    'assigned_user' => 'Assigned User',
+    'server' => 'Server',
 
     // Power Actions
     'power_actions' => 'Power Actions',
@@ -250,6 +263,11 @@ return [
     '2fa_not_enabled' => '2FA is not enabled on your account.',
     '2fa_disable_desc' => 'Disabling 2FA will remove the extra security layer from your account.',
     '2fa_disable_confirm' => 'Are you sure you want to disable two-factor authentication?',
+    '2fa_view_codes' => 'View Recovery Codes',
+    '2fa_hide_codes' => 'Hide Recovery Codes',
+    '2fa_confirm_view' => 'Confirm Password',
+    '2fa_confirm_view_desc' => 'Enter your password to view recovery codes',
+    '2fa_no_codes' => 'No recovery codes available',
     'security' => 'Security',
     'or' => 'or',
 
@@ -305,4 +323,46 @@ return [
     'audit_action_server_connection_test' => 'Server connection tested',
     'audit_action_domain_forwarding_created' => 'Domain forwarding created',
     'audit_action_domain_forwarding_deleted' => 'Domain forwarding deleted',
+
+    // Theme
+    'management' => 'Management',
+    'close' => 'Close',
+    'testing_connection' => 'Testing Connection...',
+    'please_wait' => 'Please wait while we test the connection.',
+    'connection_successful' => 'Connection Successful',
+    'unexpected_error' => 'An unexpected error occurred.',
+    'never' => 'Never',
+    'test' => 'Test',
+    'name' => 'Name',
+    'role' => 'Role',
+    'created' => 'Created',
+
+    // Profile
+    'profile' => 'Profile',
+    'profile_information' => 'Profile Information',
+    'profile_information_desc' => 'Update your account\'s profile information and email address.',
+    'profile_updated' => 'Profile updated successfully.',
+    'change_password' => 'Change Password',
+    'change_password_desc' => 'Ensure your account is using a long, random password to stay secure.',
+    'current_password' => 'Current Password',
+    'new_password' => 'New Password',
+    'confirm_password' => 'Confirm Password',
+    'update_password' => 'Update Password',
+    'password_changed' => 'Password changed successfully.',
+    '2fa_profile_desc' => 'Add additional security to your account using two-factor authentication.',
+    '2fa_enabled_desc' => 'Your account is protected with two-factor authentication.',
+    '2fa_disabled_desc' => 'Enable two-factor authentication for enhanced security.',
+
+    // Forgot Password
+    'forgot_password_title' => 'Forgot Password',
+    'forgot_password_desc' => 'Enter your email address and we\'ll send you a link to reset your password.',
+    'send_reset_link' => 'Send Reset Link',
+    'back_to_login' => 'Back to Login',
+    'password_reset_link_sent' => 'If an account exists with that email, we\'ve sent a password reset link.',
+    'reset_password_title' => 'Reset Password',
+    'reset_password_desc' => 'Enter your new password below.',
+    'reset_password' => 'Reset Password',
+    'password_reset_success' => 'Your password has been reset successfully. You can now log in.',
+    'invalid_reset_token' => 'This password reset link is invalid or has expired.',
+    'reset_token_expired' => 'This password reset link has expired. Please request a new one.',
 ];

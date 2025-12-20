@@ -241,6 +241,39 @@ class MailService
     }
 
     /**
+     * Send password reset email.
+     */
+    public function sendPasswordReset(User $user, string $resetUrl): bool
+    {
+        try {
+            $this->configureMailer();
+            $config = $this->settingService->getMailConfig();
+            $appName = $this->settingService->appName();
+
+            $html = "
+                <h1>Reset Your Password</h1>
+                <p>Hello {$user->name},</p>
+                <p>You are receiving this email because we received a password reset request for your account.</p>
+                <p><a href=\"{$resetUrl}\" style=\"display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 8px;\">Reset Password</a></p>
+                <p>This password reset link will expire in 60 minutes.</p>
+                <p>If you did not request a password reset, no further action is required.</p>
+                <p>Regards,<br>{$appName}</p>
+            ";
+
+            Mail::html($html, function ($message) use ($user, $config, $appName) {
+                $message->to($user->email, $user->name)
+                    ->from($config['from']['address'], $config['from']['name'])
+                    ->subject("Reset Password - {$appName}");
+            });
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Password reset email failed", ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
+    /**
      * Configure mailer with database settings.
      */
     protected function configureMailer(): void
