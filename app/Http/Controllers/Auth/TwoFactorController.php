@@ -94,26 +94,26 @@ class TwoFactorController extends Controller
 
     /**
      * Disable 2FA for the user.
-     * Requires password confirmation.
+     * Requires TOTP code confirmation.
      * Requirements: 4.1, 4.2, 4.3, 4.4
      */
     public function disable(Request $request): RedirectResponse
     {
         $request->validate([
-            'password' => ['required', 'string'],
+            'code' => ['required', 'string', 'size:6'],
         ]);
 
         $user = Auth::user();
-
-        // Verify password
-        if (!Hash::check($request->password, $user->password)) {
-            return back()->with('error', __('app.2fa_invalid_password'));
-        }
 
         // Check if 2FA is enabled
         if (!$user->hasTwoFactorEnabled()) {
             return redirect()->route('two-factor.setup')
                 ->with('info', __('app.2fa_not_enabled'));
+        }
+
+        // Verify TOTP code
+        if (!$this->twoFactorService->verifyCode($user, $request->code)) {
+            return back()->with('error', __('app.2fa_invalid_code'));
         }
 
         // Disable 2FA

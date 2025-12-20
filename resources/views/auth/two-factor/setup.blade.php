@@ -3,7 +3,17 @@
         {{ __('app.2fa_setup') }}
     </x-slot>
 
-    <div class="max-w-2xl mx-auto">
+    <div class="max-w-2xl mx-auto space-y-6">
+        <!-- Back Navigation -->
+        <div>
+            <a href="{{ route('profile.edit') }}" class="inline-flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                {{ __('app.back_to_profile') }}
+            </a>
+        </div>
+
         <div class="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 shadow-sm">
             <div class="px-6 py-4 border-b border-surface-200 dark:border-surface-700">
                 <h3 class="text-lg font-display font-semibold text-surface-900 dark:text-white">
