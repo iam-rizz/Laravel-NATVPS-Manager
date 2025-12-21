@@ -74,7 +74,7 @@ NAT VPS Manager is a control panel for VPS providers using Virtualizor with NAT 
 | Backend | PHP 8.2+, Laravel 12 |
 | Frontend | Tailwind CSS 3, Alpine.js 3 |
 | Database | MySQL 8.0+ / SQLite |
-| VNC Client | noVNC 1.5 |
+| VNC Client | noVNC 1.6 |
 | SSH Client | xterm.js 5 |
 | Build | Vite 6 |
 
@@ -153,8 +153,7 @@ resources/views/
 └── components/                      # Blade components
 
 scripts/
-├── vnc-proxy/                       # VNC WebSocket proxy (Node.js)
-├── ssh-proxy/                       # SSH WebSocket proxy (Node.js)
+├── console-proxy/                   # VNC & SSH WebSocket proxy (Node.js)
 └── setup-novnc.sh                   # noVNC setup script
 ```
 
@@ -209,85 +208,110 @@ chmod -R 775 storage bootstrap/cache
 
 ## Console Access
 
-### VNC Console
+### Console Proxy
 
-Browser-based VNC access using noVNC for graphical access to VPS.
+A unified WebSocket proxy that handles both VNC and SSH connections in a single server.
 
 **Architecture:**
 ```
-Browser (noVNC) → WSS → VNC Proxy (Laravel server) → TCP → VNC Server (5900+)
+Browser (noVNC)    → WSS /websockify → Console Proxy → TCP → VNC Server (5900+)
+Browser (xterm.js) → WSS /ssh        → Console Proxy → SSH → NAT VPS
 ```
 
-**Setup VNC Proxy:**
+### Deployment Options
+
+#### Option 1: VPS/Dedicated Server (Recommended)
+
+Run console-proxy on same server with Nginx/Apache reverse proxy.
+
 ```bash
-cd scripts/vnc-proxy
+cd scripts/console-proxy
+npm install
+pm2 start server.js --name console-proxy
+```
+
+`.env`:
+```env
+CONSOLE_PROXY_ENABLED=true
+CONSOLE_PROXY_PUBLIC_HOST=yourdomain.com
+```
+
+#### Option 2: Shared Hosting with Node.js
+
+If your shared hosting supports Node.js (via Phusion Passenger, cPanel Node.js, etc.):
+
+1. Deploy Laravel app on main domain: `yourdomain.com`
+2. Create subdomain for console proxy: `console.yourdomain.com`
+3. Deploy `scripts/console-proxy/` as Node.js app on the subdomain
+4. Configure Laravel `.env`:
+
+```env
+CONSOLE_PROXY_ENABLED=true
+CONSOLE_PROXY_PUBLIC_HOST=console.yourdomain.com
+CONSOLE_PROXY_SSL=true
+```
+
+**cPanel Node.js Setup:**
+- Application root: `scripts/console-proxy`
+- Application URL: `console.yourdomain.com`
+- Application startup file: `server.js`
+- Run NPM Install from cPanel
+
+#### Option 3: External Server
+
+Deploy console-proxy on a separate cheap VPS:
+
+```bash
+git clone https://github.com/iam-rizz/Laravel-NATVPS-Manager.git
+cd Laravel-NATVPS-Manager/scripts/console-proxy
 npm install
 cp .env.example .env
-npm start
+# Edit .env: CONSOLE_PROXY_PORT=6080
+pm2 start server.js --name console-proxy
 ```
 
-**Environment (scripts/vnc-proxy/.env):**
+Laravel `.env`:
 ```env
-VNC_PROXY_PORT=6080
-VNC_PROXY_HOST=0.0.0.0
-VNC_PROXY_PATH=/websockify
+CONSOLE_PROXY_PUBLIC_HOST=your-proxy-server.com:6080
+CONSOLE_PROXY_SSL=false  # or true if using SSL
 ```
+
+#### Option 4: Disable Console
+
+If you cannot run the console proxy:
+
+```env
+CONSOLE_PROXY_ENABLED=false
+```
+
+The Console menu will be hidden from the sidebar.
 
 **Production with PM2:**
 ```bash
-pm2 start server.js --name vnc-proxy
+cd scripts/console-proxy
+pm2 start server.js --name console-proxy
 pm2 save
 pm2 startup
 ```
 
-### SSH Web Terminal
-
-Browser-based SSH using xterm.js for command line access to VPS.
-
-**Architecture:**
-```
-Browser (xterm.js) → WSS → SSH Proxy (Laravel server) → SSH → NAT VPS
-```
-
-**Setup SSH Proxy:**
-```bash
-cd scripts/ssh-proxy
-npm install
-cp .env.example .env
-npm start
-```
-
-**Environment (scripts/ssh-proxy/.env):**
-```env
-SSH_PROXY_PORT=2222
-SSH_PROXY_HOST=0.0.0.0
-SSH_PROXY_PATH=/ssh
-```
-
-**Production with PM2:**
-```bash
-pm2 start server.js --name ssh-proxy
-pm2 save
-```
+**Endpoints:**
+| Endpoint | Description |
+|----------|-------------|
+| `/websockify/HOST/PORT` | VNC WebSocket proxy |
+| `/ssh` | SSH WebSocket proxy |
+| `/health` | Health check |
 
 ### Laravel Environment
 
 Add to `.env`:
 
 ```env
-# VNC Proxy
-WEBSOCKIFY_ENABLED=true
-WEBSOCKIFY_HOST=127.0.0.1
-WEBSOCKIFY_VNC_PORT=6080
-WEBSOCKIFY_PUBLIC_HOST=your-domain.com
-
-# SSH Proxy
-SSH_PROXY_ENABLED=true
-SSH_PROXY_HOST=127.0.0.1
-SSH_PROXY_PORT=2222
-SSH_PROXY_PUBLIC_HOST=your-domain.com
-SSH_PROXY_BASE_PATH=/ssh
-SSH_PROXY_SSL=true
+# Console Proxy
+CONSOLE_PROXY_ENABLED=true
+CONSOLE_PROXY_HOST=127.0.0.1
+CONSOLE_PROXY_PORT=6080
+CONSOLE_PROXY_PUBLIC_HOST=your-domain.com
+CONSOLE_PROXY_SSL=true
 ```
 
 ### Nginx Configuration
@@ -310,19 +334,9 @@ server {
         include fastcgi_params;
     }
 
-    # VNC WebSocket Proxy
-    location /websockify {
+    # Console Proxy (VNC & SSH)
+    location ~ ^/(websockify|ssh) {
         proxy_pass http://127.0.0.1:6080;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_read_timeout 86400;
-    }
-
-    # SSH WebSocket Proxy
-    location /ssh {
-        proxy_pass http://127.0.0.1:2222;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -334,6 +348,36 @@ server {
         deny all;
     }
 }
+```
+
+### Apache Configuration
+
+Enable required modules first:
+```bash
+sudo a2enmod rewrite proxy proxy_http proxy_wstunnel
+sudo systemctl restart apache2
+```
+
+Virtual host configuration:
+```apache
+<VirtualHost *:80>
+    ServerName your-domain.com
+    DocumentRoot /var/www/nat-vps-manager/public
+
+    <Directory /var/www/nat-vps-manager/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    # Console Proxy (VNC & SSH)
+    ProxyPass /websockify ws://127.0.0.1:6080/websockify
+    ProxyPassReverse /websockify ws://127.0.0.1:6080/websockify
+    ProxyPass /ssh ws://127.0.0.1:6080/ssh
+    ProxyPassReverse /ssh ws://127.0.0.1:6080/ssh
+
+    ErrorLog ${APACHE_LOG_DIR}/natvps-error.log
+    CustomLog ${APACHE_LOG_DIR}/natvps-access.log combined
+</VirtualHost>
 ```
 
 ---
@@ -409,8 +453,8 @@ php artisan view:clear
 ```
 
 ### Console Not Connecting
-- Ensure VNC/SSH proxy is running: `pm2 status`
-- Check Nginx WebSocket config
+- Ensure console proxy is running: `pm2 status`
+- Check Nginx/Apache WebSocket config
 - Verify `.env` proxy settings
 
 ---

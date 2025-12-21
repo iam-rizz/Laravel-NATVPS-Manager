@@ -4,7 +4,7 @@
 
 set -e
 
-NOVNC_VERSION="1.5.0"
+NOVNC_VERSION="1.6.0"
 NOVNC_URL="https://github.com/novnc/noVNC/archive/refs/tags/v${NOVNC_VERSION}.tar.gz"
 VENDOR_DIR="public/vendor"
 NOVNC_DIR="$VENDOR_DIR/novnc"

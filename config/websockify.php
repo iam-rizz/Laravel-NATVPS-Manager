@@ -1,187 +1,91 @@
 <?php
 
 /**
- * Websockify Configuration for VNC Proxy
+ * Console Proxy Configuration
  * 
- * This configuration file defines settings for websockify, which acts as a
- * WebSocket-to-TCP proxy for VNC connections. Websockify allows noVNC clients
- * to connect to VNC servers through WebSocket protocol.
+ * Unified configuration for VNC and SSH WebSocket proxy.
+ * The console proxy handles both VNC (noVNC) and SSH (xterm.js) connections
+ * through a single WebSocket server.
  * 
- * Requirements: 6.1 - Use WSS (WebSocket Secure) protocol
- * 
- * Installation:
- * - Install websockify: pip install websockify
- * - Or use Docker: docker run -d --name websockify -p 6080:6080 novnc/websockify
- * 
- * Usage:
- * websockify --web /usr/share/novnc/ --cert=/path/to/cert.pem --key=/path/to/key.pem 6080
+ * Endpoints:
+ * - VNC: /websockify/HOST/PORT
+ * - SSH: /ssh?host=HOST&port=PORT
  */
 
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | WebSocket Proxy Settings
+    | Console Proxy Settings
     |--------------------------------------------------------------------------
     |
-    | Configuration for the websockify proxy server that handles VNC
-    | connections over WebSocket protocol.
+    | Configuration for the unified console proxy server that handles both
+    | VNC and SSH connections over WebSocket protocol.
     |
     */
 
     'proxy' => [
-        // Enable/disable the proxy
-        'enabled' => env('WEBSOCKIFY_ENABLED', true),
+        // Enable/disable the console proxy
+        'enabled' => env('CONSOLE_PROXY_ENABLED', true),
 
-        // Proxy host (where websockify is running)
-        'host' => env('WEBSOCKIFY_HOST', '127.0.0.1'),
+        // Internal proxy host (where console-proxy Node.js server is running)
+        'host' => env('CONSOLE_PROXY_HOST', '127.0.0.1'),
 
-        // Proxy port for VNC connections
-        'vnc_port' => env('WEBSOCKIFY_VNC_PORT', 6080),
+        // Proxy port (single port for both VNC and SSH)
+        'port' => env('CONSOLE_PROXY_PORT', 6080),
 
-        // Proxy port for SSH connections (if using separate proxy)
-        'ssh_port' => env('WEBSOCKIFY_SSH_PORT', 2222),
+        // Public host for client WebSocket connections (domain name)
+        // If set, WebSocket URL will use this domain without port (via reverse proxy)
+        // If empty, will use APP_URL host with port
+        'public_host' => env('CONSOLE_PROXY_PUBLIC_HOST', ''),
 
-        // Public host for client connections (may differ from internal host)
-        'public_host' => env('WEBSOCKIFY_PUBLIC_HOST', ''),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | SSH WebSocket Proxy Settings
-    |--------------------------------------------------------------------------
-    |
-    | Configuration for SSH-over-WebSocket proxy. This requires a separate
-    | SSH proxy server like wetty, ttyd, or a custom Node.js SSH proxy.
-    |
-    | Options:
-    | - wetty: https://github.com/butlerx/wetty
-    | - ttyd: https://github.com/tsl0922/ttyd
-    | - Custom Node.js with ssh2 library
-    |
-    */
-
-    'ssh_proxy' => [
-        // Enable/disable SSH proxy
-        'enabled' => env('SSH_PROXY_ENABLED', true),
-
-        // SSH proxy type: 'wetty', 'ttyd', 'custom'
-        'type' => env('SSH_PROXY_TYPE', 'custom'),
-
-        // SSH proxy host
-        'host' => env('SSH_PROXY_HOST', '127.0.0.1'),
-
-        // SSH proxy port
-        'port' => env('SSH_PROXY_PORT', 2222),
-
-        // Public host for SSH proxy (for client connections)
-        'public_host' => env('SSH_PROXY_PUBLIC_HOST', ''),
-
-        // SSH proxy base path
-        'base_path' => env('SSH_PROXY_BASE_PATH', '/ssh'),
-
-        // Use SSL for SSH proxy
-        'ssl' => env('SSH_PROXY_SSL', true),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | SSL/TLS Configuration
-    |--------------------------------------------------------------------------
-    |
-    | SSL/TLS settings for secure WebSocket (WSS) connections.
-    | Required for production environments per Requirement 6.1.
-    |
-    */
-
-    'ssl' => [
-        // Force WSS in production (Requirement 6.1)
-        'enabled' => env('WEBSOCKIFY_SSL_ENABLED', true),
-
-        // Path to SSL certificate file
-        'cert' => env('WEBSOCKIFY_SSL_CERT', '/etc/ssl/certs/websockify.crt'),
-
-        // Path to SSL private key file
-        'key' => env('WEBSOCKIFY_SSL_KEY', '/etc/ssl/private/websockify.key'),
-
-        // Path to CA certificate chain (optional)
-        'ca' => env('WEBSOCKIFY_SSL_CA', ''),
-
-        // Verify SSL certificates
-        'verify' => env('WEBSOCKIFY_SSL_VERIFY', true),
+        // Use SSL/WSS for WebSocket connections
+        'ssl' => env('CONSOLE_PROXY_SSL', true),
     ],
 
     /*
     |--------------------------------------------------------------------------
     | Connection Settings
     |--------------------------------------------------------------------------
-    |
-    | Settings for WebSocket connection handling.
-    |
     */
 
     'connection' => [
         // Connection timeout in seconds
-        'timeout' => env('WEBSOCKIFY_TIMEOUT', 30),
+        'timeout' => env('CONSOLE_CONNECTION_TIMEOUT', 30),
 
         // Idle timeout before disconnection (seconds)
-        'idle_timeout' => env('WEBSOCKIFY_IDLE_TIMEOUT', 1800),
-
-        // Maximum concurrent connections per proxy instance
-        'max_connections' => env('WEBSOCKIFY_MAX_CONNECTIONS', 100),
-
-        // Enable heartbeat/ping-pong
-        'heartbeat' => env('WEBSOCKIFY_HEARTBEAT', true),
-
-        // Heartbeat interval in seconds
-        'heartbeat_interval' => env('WEBSOCKIFY_HEARTBEAT_INTERVAL', 30),
+        'idle_timeout' => env('CONSOLE_IDLE_TIMEOUT', 1800),
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Target Mapping
+    | VNC Settings
     |--------------------------------------------------------------------------
-    |
-    | Configuration for mapping WebSocket connections to VNC targets.
-    | Websockify can use a token-based system to route connections.
-    |
     */
 
-    'target' => [
-        // Use token-based target mapping
-        'use_tokens' => env('WEBSOCKIFY_USE_TOKENS', true),
+    'vnc' => [
+        // VNC quality (1-9, higher = better quality, more bandwidth)
+        'quality' => env('CONSOLE_VNC_QUALITY', 6),
 
-        // Token file path (for file-based token mapping)
-        'token_file' => env('WEBSOCKIFY_TOKEN_FILE', storage_path('app/websockify-tokens')),
-
-        // Token plugin (for dynamic token resolution)
-        'token_plugin' => env('WEBSOCKIFY_TOKEN_PLUGIN', ''),
-
-        // Default target host (if not using tokens)
-        'default_host' => env('WEBSOCKIFY_DEFAULT_HOST', ''),
-
-        // Default target port (if not using tokens)
-        'default_port' => env('WEBSOCKIFY_DEFAULT_PORT', 5900),
+        // VNC compression level (0-9)
+        'compression' => env('CONSOLE_VNC_COMPRESSION', 2),
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Logging
+    | SSH Settings
     |--------------------------------------------------------------------------
-    |
-    | Logging configuration for websockify proxy.
-    |
     */
 
-    'logging' => [
-        // Enable verbose logging
-        'verbose' => env('WEBSOCKIFY_VERBOSE', false),
+    'ssh' => [
+        // Terminal type
+        'term' => env('CONSOLE_SSH_TERM', 'xterm-256color'),
 
-        // Log file path
-        'file' => env('WEBSOCKIFY_LOG_FILE', storage_path('logs/websockify.log')),
+        // Default terminal columns
+        'cols' => env('CONSOLE_SSH_COLS', 80),
 
-        // Log level: debug, info, warning, error
-        'level' => env('WEBSOCKIFY_LOG_LEVEL', 'info'),
+        // Default terminal rows
+        'rows' => env('CONSOLE_SSH_ROWS', 24),
     ],
 
 ];
