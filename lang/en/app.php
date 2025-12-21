@@ -332,6 +332,7 @@ return [
     'audit_action_server_connection_test' => 'Server connection tested',
     'audit_action_domain_forwarding_created' => 'Domain forwarding created',
     'audit_action_domain_forwarding_deleted' => 'Domain forwarding deleted',
+    'audit_action_console_access' => 'Console accessed',
 
     // Theme
     'management' => 'Management',
@@ -345,6 +346,7 @@ return [
     'name' => 'Name',
     'role' => 'Role',
     'created' => 'Created',
+    'last_checked' => 'Last Checked',
 
     // Profile
     'profile' => 'Profile',
@@ -374,4 +376,42 @@ return [
     'password_reset_success' => 'Your password has been reset successfully. You can now log in.',
     'invalid_reset_token' => 'This password reset link is invalid or has expired.',
     'reset_token_expired' => 'This password reset link has expired. Please request a new one.',
+
+    // Console Access
+    'console' => 'Console',
+    'vnc_console' => 'VNC Console',
+    'ssh_terminal' => 'SSH Terminal',
+    'fullscreen' => 'Fullscreen',
+    'exit_fullscreen' => 'Exit Fullscreen',
+    'send_ctrl_alt_del' => 'Send Ctrl+Alt+Del',
+    'scaling' => 'Scaling',
+    'fit' => 'Fit',
+    'actual_size' => 'Actual Size',
+    'screenshot' => 'Screenshot',
+    'retry' => 'Retry',
+    'reconnect' => 'Reconnect',
+    'select_vps' => 'Select a VPS',
+    'select_vps_to_connect' => 'Select a VPS to Connect',
+    'select_vps_description' => 'Choose a VPS from the sidebar to access its console via VNC or SSH terminal.',
+    'no_vps_available' => 'No VPS available',
+    'back_to_dashboard' => 'Back to Dashboard',
+    'vnc_description' => 'Graphical remote desktop access',
+    'ssh_description' => 'Command line terminal access',
+
+    // Console Status Messages
+    'console_connecting' => 'Connecting...',
+    'console_connected' => 'Connected',
+    'console_disconnected' => 'Disconnected',
+    'console_reconnecting' => 'Reconnecting...',
+    'console_idle' => 'Ready',
+
+    // Console Error Messages
+    'console_vps_not_found' => 'VPS not found',
+    'console_unauthorized' => 'You don\'t have permission to access this console',
+    'console_vnc_unavailable' => 'VNC is not available for this VPS',
+    'console_ssh_not_configured' => 'SSH credentials not configured for this VPS',
+    'console_temporarily_unavailable' => 'Console access is temporarily unavailable',
+    'console_connection_timeout' => 'Connection timed out. Please try again',
+    'console_session_expired' => 'Session expired. Please refresh and try again',
+    'console_connection_error' => 'Connection error',
 ];

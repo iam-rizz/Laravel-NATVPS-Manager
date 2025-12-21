@@ -73,4 +73,13 @@ interface VirtualizorServiceInterface
      * Get resource usage (CPU, RAM, Disk, Bandwidth) for a VPS.
      */
     public function getResourceUsage(Server $server, int $vpsId): ?ResourceUsage;
+
+    /**
+     * Get VNC connection information for a VPS.
+     *
+     * @param Server $server The server hosting the VPS
+     * @param int $vpsId The VPS ID
+     * @return array|null Array with 'host', 'port', 'password' keys or null on failure
+     */
+    public function getVncInfo(Server $server, int $vpsId): ?array;
 }

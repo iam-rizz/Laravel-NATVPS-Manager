@@ -578,4 +578,56 @@ class VirtualizorService implements VirtualizorServiceInterface
             return null;
         }
     }
+
+    /**
+     * Get VNC connection information for a VPS.
+     *
+     * @param Server $server The server hosting the VPS
+     * @param int $vpsId The VPS ID
+     * @return array|null Array with 'host', 'port', 'password' keys or null on failure
+     */
+    public function getVncInfo(Server $server, int $vpsId): ?array
+    {
+        try {
+            $client = $this->createClient($server);
+            $result = $client->vnc($vpsId);
+
+            if ($result === false || empty($result)) {
+                Log::warning('VNC not available for VPS', [
+                    'server_id' => $server->id,
+                    'vps_id' => $vpsId,
+                ]);
+                return null;
+            }
+
+            // Virtualizor VNC API returns: ip, port, password
+            $host = $result['ip'] ?? $server->ip_address;
+            $port = $result['port'] ?? null;
+            $password = $result['password'] ?? $result['pass'] ?? null;
+
+            // Validate required fields
+            if (empty($port)) {
+                Log::warning('VNC port not available', [
+                    'server_id' => $server->id,
+                    'vps_id' => $vpsId,
+                    'result' => $result,
+                ]);
+                return null;
+            }
+
+            return [
+                'host' => $host,
+                'port' => (int) $port,
+                'password' => $password,
+            ];
+        } catch (\Exception $e) {
+            Log::error('Failed to get VNC info', [
+                'server_id' => $server->id,
+                'vps_id' => $vpsId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
 }

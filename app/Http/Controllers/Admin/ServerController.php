@@ -75,7 +75,7 @@ class ServerController extends Controller
         );
 
         return redirect()
-            ->route('admin.servers.index')
+            ->route('servers.index')
             ->with('success', "Server '{$server->name}' created successfully.");
     }
 
@@ -141,7 +141,7 @@ class ServerController extends Controller
         );
 
         return redirect()
-            ->route('admin.servers.index')
+            ->route('servers.index')
             ->with('success', "Server '{$server->name}' updated successfully.");
     }
 
@@ -178,7 +178,7 @@ class ServerController extends Controller
         $server->delete();
 
         return redirect()
-            ->route('admin.servers.index')
+            ->route('servers.index')
             ->with('success', "Server '{$serverName}' deleted successfully.");
     }
 

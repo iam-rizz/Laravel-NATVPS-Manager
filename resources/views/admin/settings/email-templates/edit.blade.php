@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-6">
-                <a href="{{ route('admin.settings.email-templates.index') }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400">
+                <a href="{{ route('settings.email-templates.index') }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400">
                     ← Back to Email Templates
                 </a>
             </div>
@@ -18,7 +18,7 @@
                 <div class="lg:col-span-2">
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
-                            <form action="{{ route('admin.settings.email-templates.update', $template) }}" method="POST">
+                            <form action="{{ route('settings.email-templates.update', $template) }}" method="POST">
                                 @csrf
                                 @method('PUT')
 
@@ -71,7 +71,7 @@
                                 </div>
 
                                 <div class="flex justify-between">
-                                    <a href="{{ route('admin.settings.email-templates.preview', $template) }}" 
+                                    <a href="{{ route('settings.email-templates.preview', $template) }}" 
                                         target="_blank"
                                         class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md">
                                         Preview

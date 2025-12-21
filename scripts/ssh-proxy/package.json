@@ -1,0 +1,18 @@
+{
+  "name": "nat-vps-ssh-proxy",
+  "version": "1.0.0",
+  "description": "SSH WebSocket Proxy for NAT VPS Manager",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "ssh2": "^1.15.0",
+    "ws": "^8.18.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

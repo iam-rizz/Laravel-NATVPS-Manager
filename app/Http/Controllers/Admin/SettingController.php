@@ -49,7 +49,7 @@ class SettingController extends Controller
             $this->settingService->uploadFile('app_favicon', $request->file('app_favicon'));
         }
 
-        return redirect()->route('admin.settings.general')
+        return redirect()->route('settings.general')
             ->with('success', 'General settings updated successfully.');
     }
 
@@ -93,7 +93,7 @@ class SettingController extends Controller
         Setting::set('mail_from_address', $request->mail_from_address);
         Setting::set('mail_from_name', $request->mail_from_name);
 
-        return redirect()->route('admin.settings.mail')
+        return redirect()->route('settings.mail')
             ->with('success', 'Mail settings updated successfully.');
     }
 
@@ -109,10 +109,10 @@ class SettingController extends Controller
         try {
             $this->mailService->sendTestEmail($request->test_email);
             
-            return redirect()->route('admin.settings.mail')
+            return redirect()->route('settings.mail')
                 ->with('success', 'Test email sent successfully to ' . $request->test_email);
         } catch (\Exception $e) {
-            return redirect()->route('admin.settings.mail')
+            return redirect()->route('settings.mail')
                 ->with('error', 'Failed to send test email: ' . $e->getMessage());
         }
     }
@@ -157,7 +157,7 @@ class SettingController extends Controller
         // User notifications
         Setting::set('notify_welcome', $request->boolean('notify_welcome') ? '1' : '0');
 
-        return redirect()->route('admin.settings.notifications')
+        return redirect()->route('settings.notifications')
             ->with('success', 'Notification settings updated successfully.');
     }
 
@@ -182,7 +182,7 @@ class SettingController extends Controller
 
         Setting::set('audit_log_retention_days', $request->audit_log_retention_days);
 
-        return redirect()->route('admin.settings.audit')
+        return redirect()->route('settings.audit')
             ->with('success', 'Audit log settings updated successfully.');
     }
 }

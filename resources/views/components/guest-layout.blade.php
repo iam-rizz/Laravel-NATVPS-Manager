@@ -4,6 +4,7 @@
     $settingService = app(\App\Services\SettingService::class);
     $appName = $settingService->appName();
     $appLogo = $settingService->appLogo();
+    $appFavicon = $settingService->appFavicon();
 @endphp
 <head>
     <meta charset="utf-8">
@@ -12,6 +13,12 @@
     <meta name="theme-color" content="#ffffff">
 
     <title>{{ $appName }}</title>
+
+    <!-- Favicon -->
+    @if($appFavicon)
+        <link rel="icon" type="image/png" href="{{ $appFavicon }}">
+        <link rel="shortcut icon" href="{{ $appFavicon }}">
+    @endif
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

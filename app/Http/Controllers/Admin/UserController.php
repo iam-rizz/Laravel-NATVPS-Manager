@@ -76,7 +76,7 @@ class UserController extends Controller
         );
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('users.index')
             ->with('success', "User '{$user->name}' created successfully.");
     }
 
@@ -137,7 +137,7 @@ class UserController extends Controller
         );
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('users.index')
             ->with('success', "User '{$user->name}' updated successfully.");
     }
 
@@ -150,7 +150,7 @@ class UserController extends Controller
         // Prevent deleting yourself
         if ($user->id === $request->user()?->id) {
             return redirect()
-                ->route('admin.users.index')
+                ->route('users.index')
                 ->with('error', 'You cannot delete your own account.');
         }
 
@@ -180,7 +180,7 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()
-            ->route('admin.users.index')
+            ->route('users.index')
             ->with('success', "User '{$userName}' deleted successfully.");
     }
 

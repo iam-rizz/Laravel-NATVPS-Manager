@@ -8,7 +8,7 @@
         <div>
             <p class="text-surface-500 dark:text-surface-400">{{ __('app.manage_virtualizor_servers') ?? 'Manage your Virtualizor servers' }}</p>
         </div>
-        <a href="{{ route('admin.servers.create') }}" class="btn btn-primary">
+        <a href="{{ route('servers.create') }}" class="btn btn-primary">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -27,7 +27,7 @@
                 </div>
                 <h3 class="text-lg font-medium text-surface-900 dark:text-white mb-2">{{ __('app.no_servers') ?? 'No servers' }}</h3>
                 <p class="text-surface-500 dark:text-surface-400 mb-6">{{ __('app.get_started_add_server') ?? 'Get started by adding a new Virtualizor server.' }}</p>
-                <a href="{{ route('admin.servers.create') }}" class="btn btn-primary">
+                <a href="{{ route('servers.create') }}" class="btn btn-primary">
                     {{ __('app.add_server') ?? 'Add Server' }}
                 </a>
             </div>
@@ -79,14 +79,14 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                             </svg>
                                         </button>
-                                        <a href="{{ route('admin.servers.edit', $server) }}" 
+                                        <a href="{{ route('servers.edit', $server) }}" 
                                            class="btn btn-sm btn-ghost"
                                            title="{{ __('app.edit') ?? 'Edit' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('admin.servers.destroy', $server) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('app.confirm_delete_server') ?? 'Are you sure you want to delete this server?' }}')">
+                                        <form action="{{ route('servers.destroy', $server) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('app.confirm_delete_server') ?? 'Are you sure you want to delete this server?' }}')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
@@ -137,10 +137,10 @@
                                     class="btn btn-sm btn-secondary flex-1">
                                 {{ __('app.test') ?? 'Test' }}
                             </button>
-                            <a href="{{ route('admin.servers.edit', $server) }}" class="btn btn-sm btn-secondary flex-1">
+                            <a href="{{ route('servers.edit', $server) }}" class="btn btn-sm btn-secondary flex-1">
                                 {{ __('app.edit') ?? 'Edit' }}
                             </a>
-                            <form action="{{ route('admin.servers.destroy', $server) }}" method="POST" class="flex-1" onsubmit="return confirm('{{ __('app.confirm_delete_server') ?? 'Are you sure?' }}')">
+                            <form action="{{ route('servers.destroy', $server) }}" method="POST" class="flex-1" onsubmit="return confirm('{{ __('app.confirm_delete_server') ?? 'Are you sure?' }}')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger w-full">
@@ -185,7 +185,7 @@
             modalTitle.textContent = '{{ __("app.testing_connection") ?? "Testing Connection..." }}';
             modalMessage.textContent = '{{ __("app.please_wait") ?? "Please wait while we test the connection." }}';
             
-            fetch(`/admin/servers/${serverId}/test-connection`, {
+            fetch(`/servers/${serverId}/test-connection`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

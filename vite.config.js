@@ -8,4 +8,16 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        target: 'esnext',
+        rollupOptions: {
+            external: [/^\/vendor\/novnc\/.*/],
+        },
+    },
+    optimizeDeps: {
+        exclude: ['@novnc/novnc'],
+        esbuildOptions: {
+            target: 'esnext',
+        },
+    },
 });

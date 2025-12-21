@@ -332,6 +332,7 @@ return [
     'audit_action_server_connection_test' => 'Koneksi server diuji',
     'audit_action_domain_forwarding_created' => 'Penerusan domain dibuat',
     'audit_action_domain_forwarding_deleted' => 'Penerusan domain dihapus',
+    'audit_action_console_access' => 'Konsol diakses',
 
     // Theme
     'management' => 'Manajemen',
@@ -374,4 +375,42 @@ return [
     'password_reset_success' => 'Kata sandi Anda berhasil direset. Anda sekarang dapat masuk.',
     'invalid_reset_token' => 'Link reset kata sandi ini tidak valid atau sudah kedaluwarsa.',
     'reset_token_expired' => 'Link reset kata sandi ini sudah kedaluwarsa. Silakan minta yang baru.',
+
+    // Console Access
+    'console' => 'Konsol',
+    'vnc_console' => 'Konsol VNC',
+    'ssh_terminal' => 'Terminal SSH',
+    'fullscreen' => 'Layar Penuh',
+    'exit_fullscreen' => 'Keluar Layar Penuh',
+    'send_ctrl_alt_del' => 'Kirim Ctrl+Alt+Del',
+    'scaling' => 'Skala',
+    'fit' => 'Sesuaikan',
+    'actual_size' => 'Ukuran Asli',
+    'screenshot' => 'Tangkapan Layar',
+    'retry' => 'Coba Lagi',
+    'reconnect' => 'Hubungkan Ulang',
+    'select_vps' => 'Pilih VPS',
+    'select_vps_to_connect' => 'Pilih VPS untuk Terhubung',
+    'select_vps_description' => 'Pilih VPS dari sidebar untuk mengakses konsol melalui VNC atau terminal SSH.',
+    'no_vps_available' => 'Tidak ada VPS tersedia',
+    'back_to_dashboard' => 'Kembali ke Dashboard',
+    'vnc_description' => 'Akses remote desktop grafis',
+    'ssh_description' => 'Akses terminal command line',
+
+    // Console Status Messages
+    'console_connecting' => 'Menghubungkan...',
+    'console_connected' => 'Terhubung',
+    'console_disconnected' => 'Terputus',
+    'console_reconnecting' => 'Menghubungkan ulang...',
+    'console_idle' => 'Siap',
+
+    // Console Error Messages
+    'console_vps_not_found' => 'VPS tidak ditemukan',
+    'console_unauthorized' => 'Anda tidak memiliki izin untuk mengakses konsol ini',
+    'console_vnc_unavailable' => 'VNC tidak tersedia untuk VPS ini',
+    'console_ssh_not_configured' => 'Kredensial SSH belum dikonfigurasi untuk VPS ini',
+    'console_temporarily_unavailable' => 'Akses konsol sementara tidak tersedia',
+    'console_connection_timeout' => 'Koneksi timeout. Silakan coba lagi',
+    'console_session_expired' => 'Sesi berakhir. Silakan refresh dan coba lagi',
+    'console_connection_error' => 'Kesalahan koneksi',
 ];

@@ -8,7 +8,7 @@
         <div>
             <p class="text-surface-500 dark:text-surface-400">{{ __('app.manage_users') ?? 'Manage system users' }}</p>
         </div>
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+        <a href="{{ route('users.create') }}" class="btn btn-primary">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -27,7 +27,7 @@
                 </div>
                 <h3 class="text-lg font-medium text-surface-900 dark:text-white mb-2">{{ __('app.no_users') ?? 'No users' }}</h3>
                 <p class="text-surface-500 dark:text-surface-400 mb-6">{{ __('app.get_started_add_user') ?? 'Get started by adding a new user.' }}</p>
-                <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+                <a href="{{ route('users.create') }}" class="btn btn-primary">
                     {{ __('app.add_user') ?? 'Add User' }}
                 </a>
             </div>
@@ -74,7 +74,7 @@
                                 </td>
                                 <td>
                                     <div class="flex justify-end gap-2">
-                                        <a href="{{ route('admin.users.show', $user) }}" 
+                                        <a href="{{ route('users.show', $user) }}" 
                                            class="btn btn-sm btn-ghost text-blue-600 dark:text-blue-400"
                                            title="{{ __('app.view') ?? 'View' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                             </svg>
                                         </a>
-                                        <a href="{{ route('admin.users.edit', $user) }}" 
+                                        <a href="{{ route('users.edit', $user) }}" 
                                            class="btn btn-sm btn-ghost"
                                            title="{{ __('app.edit') ?? 'Edit' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +90,7 @@
                                             </svg>
                                         </a>
                                         @if($user->id !== auth()->user()?->id)
-                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('app.confirm_delete_user') ?? 'Are you sure?' }}')">
+                                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('app.confirm_delete_user') ?? 'Are you sure?' }}')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
@@ -137,14 +137,14 @@
                             <span>{{ $user->created_at->format('M d, Y') }}</span>
                         </div>
                         <div class="flex gap-2">
-                            <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-secondary flex-1">
+                            <a href="{{ route('users.show', $user) }}" class="btn btn-sm btn-secondary flex-1">
                                 {{ __('app.view') ?? 'View' }}
                             </a>
-                            <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-secondary flex-1">
+                            <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-secondary flex-1">
                                 {{ __('app.edit') ?? 'Edit' }}
                             </a>
                             @if($user->id !== auth()->user()?->id)
-                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="flex-1" onsubmit="return confirm('{{ __('app.confirm_delete_user') ?? 'Are you sure?' }}')">
+                            <form action="{{ route('users.destroy', $user) }}" method="POST" class="flex-1" onsubmit="return confirm('{{ __('app.confirm_delete_user') ?? 'Are you sure?' }}')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger w-full">

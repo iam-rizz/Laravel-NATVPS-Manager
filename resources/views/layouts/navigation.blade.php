@@ -19,31 +19,32 @@
                         {{ __('app.dashboard') }}
                     </a>
                     
+                    {{-- Shared menu items (both admin and user) --}}
+                    <a href="{{ route('nat-vps.index') }}" 
+                       class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('nat-vps.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
+                        {{ auth()->user()->isAdmin() ? __('app.nat_vps') : __('app.my_vps') }}
+                    </a>
+                    <a href="{{ route('console.index') }}" 
+                       class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('console.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
+                        {{ __('app.console') }}
+                    </a>
+                    
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.servers.index') }}" 
-                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.servers.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
+                        <a href="{{ route('servers.index') }}" 
+                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('servers.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
                             {{ __('app.servers') }}
                         </a>
-                        <a href="{{ route('admin.nat-vps.index') }}" 
-                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.nat-vps.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
-                            {{ __('app.nat_vps') }}
-                        </a>
-                        <a href="{{ route('admin.users.index') }}" 
-                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.users.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
+                        <a href="{{ route('users.index') }}" 
+                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('users.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
                             {{ __('app.users') }}
                         </a>
-                        <a href="{{ route('admin.settings.general') }}" 
-                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.settings.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
+                        <a href="{{ route('settings.general') }}" 
+                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('settings.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
                             {{ __('app.settings') }}
                         </a>
-                        <a href="{{ route('admin.audit-logs.index') }}" 
-                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.audit-logs.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
+                        <a href="{{ route('audit-logs.index') }}" 
+                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('audit-logs.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
                             {{ __('app.audit_logs') }}
-                        </a>
-                    @else
-                        <a href="{{ route('user.vps.index') }}" 
-                           class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('user.vps.*') ? 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }} text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out">
-                            {{ __('app.my_vps') }}
                         </a>
                     @endif
                 </div>
@@ -142,31 +143,32 @@
                 {{ __('app.dashboard') }}
             </a>
             
+            {{-- Shared menu items (both admin and user) --}}
+            <a href="{{ route('nat-vps.index') }}" 
+               class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('nat-vps.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
+                {{ auth()->user()->isAdmin() ? __('app.nat_vps') : __('app.my_vps') }}
+            </a>
+            <a href="{{ route('console.index') }}" 
+               class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('console.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
+                {{ __('app.console') }}
+            </a>
+            
             @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.servers.index') }}" 
-                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('admin.servers.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
+                <a href="{{ route('servers.index') }}" 
+                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('servers.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
                     {{ __('app.servers') }}
                 </a>
-                <a href="{{ route('admin.nat-vps.index') }}" 
-                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('admin.nat-vps.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
-                    {{ __('app.nat_vps') }}
-                </a>
-                <a href="{{ route('admin.users.index') }}" 
-                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('admin.users.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
+                <a href="{{ route('users.index') }}" 
+                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('users.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
                     {{ __('app.users') }}
                 </a>
-                <a href="{{ route('admin.settings.general') }}" 
-                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('admin.settings.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
+                <a href="{{ route('settings.general') }}" 
+                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('settings.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
                     {{ __('app.settings') }}
                 </a>
-                <a href="{{ route('admin.audit-logs.index') }}" 
-                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('admin.audit-logs.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
+                <a href="{{ route('audit-logs.index') }}" 
+                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('audit-logs.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
                     {{ __('app.audit_logs') }}
-                </a>
-            @else
-                <a href="{{ route('user.vps.index') }}" 
-                   class="block w-full ps-3 pe-4 py-2 border-l-4 {{ request()->routeIs('user.vps.*') ? 'border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/50' : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }} text-start text-base font-medium focus:outline-none transition duration-150 ease-in-out">
-                    {{ __('app.my_vps') }}
                 </a>
             @endif
         </div>

@@ -3,8 +3,19 @@ import Alpine from 'alpinejs';
 import Toastify from 'toastify-js';
 import ThemeManager from './theme';
 
+// Console modules
+import { VncClient, SshClient, ConsoleManager } from './console/index.js';
+
+// Import xterm.js CSS
+import '@xterm/xterm/css/xterm.css';
+
 // Initialize theme manager immediately to prevent flash
 ThemeManager.init();
+
+// Make console modules available globally
+window.VncClient = VncClient;
+window.SshClient = SshClient;
+window.ConsoleManager = ConsoleManager;
 
 window.Alpine = Alpine;
 Alpine.start();

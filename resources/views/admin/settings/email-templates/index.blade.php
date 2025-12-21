@@ -47,12 +47,12 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <a href="{{ route('admin.settings.email-templates.preview', $template) }}" 
+                                            <a href="{{ route('settings.email-templates.preview', $template) }}" 
                                                 target="_blank"
                                                 class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white mr-3">
                                                 Preview
                                             </a>
-                                            <a href="{{ route('admin.settings.email-templates.edit', $template) }}" 
+                                            <a href="{{ route('settings.email-templates.edit', $template) }}" 
                                                 class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
                                                 Edit
                                             </a>

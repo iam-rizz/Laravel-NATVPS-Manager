@@ -11,7 +11,7 @@
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form action="{{ route('admin.settings.mail.update') }}" method="POST">
+                    <form action="{{ route('settings.mail.update') }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -131,7 +131,7 @@
                     <!-- Test Email Section -->
                     <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Test Email Configuration</h3>
-                        <form action="{{ route('admin.settings.mail.test') }}" method="POST" class="flex gap-4">
+                        <form action="{{ route('settings.mail.test') }}" method="POST" class="flex gap-4">
                             @csrf
                             <input type="email" name="test_email" placeholder="Enter email address" required
                                 class="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">

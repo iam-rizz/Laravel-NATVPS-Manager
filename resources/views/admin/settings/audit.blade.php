@@ -15,7 +15,7 @@
                         Configure audit log retention and cleanup settings.
                     </p>
 
-                    <form action="{{ route('admin.settings.audit.update') }}" method="POST">
+                    <form action="{{ route('settings.audit.update') }}" method="POST">
                         @csrf
                         @method('PUT')
 

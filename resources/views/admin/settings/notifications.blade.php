@@ -15,7 +15,7 @@
                         Configure which email notifications should be sent to users. Make sure email is enabled in Mail Settings.
                     </p>
 
-                    <form action="{{ route('admin.settings.notifications.update') }}" method="POST">
+                    <form action="{{ route('settings.notifications.update') }}" method="POST">
                         @csrf
                         @method('PUT')
 
