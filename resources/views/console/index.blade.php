@@ -1,9 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __('app.console') }}
+        <div class="flex items-center justify-between">
+            <span>{{ __('app.console') }}</span>
+            <x-console-proxy-status :compact="true" class="hidden sm:flex" />
+        </div>
     </x-slot>
 
-    <div class="card">
+    <div class="space-y-6">
+        {{-- Console Proxy Status (Mobile) --}}
+        <div class="sm:hidden">
+            <x-console-proxy-status />
+        </div>
+
+        {{-- VPS List --}}
+        <div class="card">
         <div class="card-header">
             <h3 class="text-lg font-display font-semibold text-surface-900 dark:text-white">
                 {{ __('app.select_vps_to_connect') }}
@@ -74,5 +84,6 @@
                 </div>
             @endif
         </div>
+    </div>
     </div>
 </x-app-layout>

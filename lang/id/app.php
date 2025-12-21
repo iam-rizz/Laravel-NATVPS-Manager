@@ -413,4 +413,20 @@ return [
     'console_connection_timeout' => 'Koneksi timeout. Silakan coba lagi',
     'console_session_expired' => 'Sesi berakhir. Silakan refresh dan coba lagi',
     'console_connection_error' => 'Kesalahan koneksi',
+
+    // Console Proxy Status
+    'console_proxy_status' => 'Console Proxy',
+    'console_proxy_disabled' => 'Console proxy dinonaktifkan',
+    'console_proxy_running' => 'Console proxy berjalan',
+    'console_proxy_error' => 'Console proxy mengembalikan error',
+    'console_proxy_offline' => 'Tidak dapat terhubung ke console proxy',
+    'console_proxy_check_failed' => 'Pemeriksaan kesehatan gagal',
+    'online' => 'Online',
+    'offline' => 'Offline',
+    'disabled' => 'Nonaktif',
+    'checking' => 'Memeriksa...',
+    'services' => 'Layanan',
+    'response_time' => 'Waktu Respon',
+    'last_checked' => 'Terakhir diperiksa',
+    'host' => 'Host',
 ];

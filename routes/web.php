@@ -122,6 +122,7 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     
     // Console Access
     Route::get('console', [ConsoleController::class, 'index'])->name('console.index');
+    Route::get('console/proxy-health', [ConsoleController::class, 'proxyHealth'])->name('console.proxy-health');
     Route::get('console/{natVps}', [ConsoleController::class, 'show'])->name('console.show');
     Route::get('console/{natVps}/vnc', [ConsoleController::class, 'getVncDetails'])->name('console.vnc');
     Route::get('console/{natVps}/ssh', [ConsoleController::class, 'getSshDetails'])->name('console.ssh');

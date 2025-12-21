@@ -45,6 +45,33 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Health Check Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for console proxy health monitoring.
+    |
+    */
+
+    'health' => [
+        // Explicit health check URL (optional)
+        // If set, this URL will be used instead of auto-detection
+        // Useful for complex setups or when proxy is behind different endpoint
+        'url' => env('CONSOLE_PROXY_HEALTH_URL', ''),
+
+        // Health check timeout in seconds
+        'timeout' => env('CONSOLE_PROXY_HEALTH_TIMEOUT', 5),
+
+        // Cache TTL for health check results (seconds)
+        // Set to 0 to disable caching
+        'cache_ttl' => env('CONSOLE_PROXY_HEALTH_CACHE_TTL', 30),
+
+        // Auto-refresh interval for frontend widget (seconds)
+        // Set to 0 to disable auto-refresh
+        'refresh_interval' => env('CONSOLE_PROXY_HEALTH_REFRESH', 60),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Connection Settings
     |--------------------------------------------------------------------------
     */

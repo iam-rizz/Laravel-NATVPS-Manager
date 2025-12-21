@@ -414,4 +414,20 @@ return [
     'console_connection_timeout' => 'Connection timed out. Please try again',
     'console_session_expired' => 'Session expired. Please refresh and try again',
     'console_connection_error' => 'Connection error',
+
+    // Console Proxy Status
+    'console_proxy_status' => 'Console Proxy',
+    'console_proxy_disabled' => 'Console proxy is disabled',
+    'console_proxy_running' => 'Console proxy is running',
+    'console_proxy_error' => 'Console proxy returned error',
+    'console_proxy_offline' => 'Cannot connect to console proxy',
+    'console_proxy_check_failed' => 'Health check failed',
+    'online' => 'Online',
+    'offline' => 'Offline',
+    'disabled' => 'Disabled',
+    'checking' => 'Checking...',
+    'services' => 'Services',
+    'response_time' => 'Response Time',
+    'last_checked' => 'Last checked',
+    'host' => 'Host',
 ];

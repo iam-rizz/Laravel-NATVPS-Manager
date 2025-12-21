@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\NatVps;
 use App\Models\User;
 use App\Services\AuditLogService;
+use App\Services\Console\ConsoleProxyHealthCheck;
 use App\Services\Console\WebSocketUrlBuilder;
 use App\Services\Virtualizor\Contracts\VirtualizorServiceInterface;
 use Illuminate\Http\JsonResponse;
@@ -22,12 +23,24 @@ use Illuminate\View\View;
 class ConsoleController extends Controller
 {
     protected WebSocketUrlBuilder $webSocketUrlBuilder;
+    protected ConsoleProxyHealthCheck $healthCheck;
 
     public function __construct(
         protected VirtualizorServiceInterface $virtualizorService,
         protected AuditLogService $auditLogService
     ) {
         $this->webSocketUrlBuilder = new WebSocketUrlBuilder();
+        $this->healthCheck = new ConsoleProxyHealthCheck();
+    }
+
+    /**
+     * Get console proxy health status.
+     */
+    public function proxyHealth(): JsonResponse
+    {
+        $health = $this->healthCheck->check(useCache: false);
+        
+        return response()->json($health);
     }
 
     /**

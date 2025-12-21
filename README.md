@@ -1,6 +1,6 @@
 <div align="center">
 
-# NAT VPS Manager v2.0
+# NAT VPS Manager v2.1
 
 **Web-based control panel for managing Virtualizor NAT VPS instances**
 
@@ -50,6 +50,7 @@ NAT VPS Manager is a control panel for VPS providers using Virtualizor with NAT 
 ### v2.0 New Features
 - 🖥️ **VNC Console** - Browser-based VNC access via noVNC
 - 💻 **SSH Web Terminal** - Browser-based SSH via xterm.js
+- 📊 **Console Proxy Monitoring** - Real-time health status for admin & users
 - 🔗 **Unified Routes** - Simplified URL structure (`/dashboard`, `/vps`, `/console`)
 - 🎨 **Improved UI** - Consistent theme across all pages
 
@@ -301,6 +302,42 @@ pm2 startup
 | `/ssh` | SSH WebSocket proxy |
 | `/health` | Health check |
 
+### Console Proxy Monitoring
+
+The application includes built-in health monitoring for the console proxy, visible to both admin and users.
+
+**Features:**
+- Real-time status indicator (Online/Offline/Disabled)
+- Response time monitoring
+- Auto-refresh (configurable interval)
+- Works with all deployment options (same server, subdomain, external)
+
+**Status Widget:**
+- Compact view in console page header
+- Full card view on mobile
+
+**Health Check Configuration:**
+```env
+# Optional: explicit health check URL (auto-detected if empty)
+CONSOLE_PROXY_HEALTH_URL=
+
+# Health check timeout (seconds)
+CONSOLE_PROXY_HEALTH_TIMEOUT=5
+
+# Cache results (seconds)
+CONSOLE_PROXY_HEALTH_CACHE_TTL=30
+
+# Auto-refresh interval (seconds, 0 to disable)
+CONSOLE_PROXY_HEALTH_REFRESH=60
+```
+
+**Health Check URL Detection:**
+| Scenario | Health Check URL |
+|----------|------------------|
+| Same server | `http://127.0.0.1:6080/health` |
+| Subdomain | `https://console.domain.com/health` |
+| External + port | `https://server.com:6080/health` |
+
 ### Laravel Environment
 
 Add to `.env`:
@@ -460,6 +497,12 @@ php artisan view:clear
 ---
 
 ## Changelog
+
+### v2.1.0
+- noVNC 1.6
+- Unified console proxy (single server for VNC & SSH)
+- Console proxy health monitoring
+- Multiple deployment options (VPS, shared hosting, external)
 
 ### v2.0.0
 - VNC Console (noVNC)
