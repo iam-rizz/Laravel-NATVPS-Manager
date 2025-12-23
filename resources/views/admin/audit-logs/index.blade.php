@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight" style="font-size: 16px;">
                 {{ __('app.audit_logs') }}
             </h2>
             <a href="{{ route('audit-logs.export', request()->query()) }}" 
