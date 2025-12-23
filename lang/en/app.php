@@ -8,6 +8,7 @@ return [
     'users' => 'Users',
     'settings' => 'Settings',
     'my_vps' => 'My VPS',
+    'my_vps_desc' => 'View and manage your assigned VPS instances',
     'logout' => 'Log Out',
     'manage_virtualizor_servers' => 'Manage Virtualizor Servers',
     'manage_users' => 'Manage Users',
@@ -108,6 +109,7 @@ return [
     'ssh_password' => 'Password',
     'ssh_port' => 'SSH Port',
     'ssh_command' => 'SSH Command',
+    'ssh_credentials_updated' => 'SSH credentials updated successfully.',
     'copy' => 'Copy',
     'copied' => 'Copied!',
     'show' => 'Show',
@@ -326,6 +328,7 @@ return [
     'audit_action_vps_stop' => 'VPS stopped',
     'audit_action_vps_restart' => 'VPS restarted',
     'audit_action_vps_poweroff' => 'VPS powered off',
+    'audit_action_vps_ssh_updated' => 'VPS SSH credentials updated',
     'audit_action_server_created' => 'Server created',
     'audit_action_server_updated' => 'Server updated',
     'audit_action_server_deleted' => 'Server deleted',
@@ -379,6 +382,7 @@ return [
 
     // Console Access
     'console' => 'Console',
+    'open_console' => 'Open Console',
     'vnc_console' => 'VNC Console',
     'ssh_terminal' => 'SSH Terminal',
     'fullscreen' => 'Fullscreen',

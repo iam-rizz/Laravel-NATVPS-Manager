@@ -8,6 +8,7 @@ return [
     'users' => 'Pengguna',
     'settings' => 'Pengaturan',
     'my_vps' => 'VPS Saya',
+    'my_vps_desc' => 'Lihat dan kelola VPS yang ditugaskan kepada Anda',
     'logout' => 'Keluar',
     'manage_virtualizor_servers' => 'Kelola Server Virtualizor',
     'manage_users' => 'Kelola Pengguna',
@@ -108,6 +109,7 @@ return [
     'ssh_password' => 'Password',
     'ssh_port' => 'Port SSH',
     'ssh_command' => 'Perintah SSH',
+    'ssh_credentials_updated' => 'Kredensial SSH berhasil diperbarui.',
     'copy' => 'Salin',
     'copied' => 'Tersalin!',
     'show' => 'Tampilkan',
@@ -326,6 +328,7 @@ return [
     'audit_action_vps_stop' => 'VPS dihentikan',
     'audit_action_vps_restart' => 'VPS dimulai ulang',
     'audit_action_vps_poweroff' => 'VPS dimatikan',
+    'audit_action_vps_ssh_updated' => 'Kredensial SSH VPS diperbarui',
     'audit_action_server_created' => 'Server dibuat',
     'audit_action_server_updated' => 'Server diperbarui',
     'audit_action_server_deleted' => 'Server dihapus',
@@ -378,6 +381,7 @@ return [
 
     // Console Access
     'console' => 'Konsol',
+    'open_console' => 'Buka Konsol',
     'vnc_console' => 'Konsol VNC',
     'ssh_terminal' => 'Terminal SSH',
     'fullscreen' => 'Layar Penuh',

@@ -39,6 +39,7 @@ class VpsController extends Controller
      */
     public function index(Request $request): View
     {
+        /** @var \App\Models\User $user */
         $user = $request->user();
 
         if ($user->isAdmin()) {
@@ -162,10 +163,11 @@ class VpsController extends Controller
      */
     public function show(NatVps $natVps): View
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         
         // Check access for non-admin users
-        if (!$user->isAdmin() && $natVps->user_id !== $user->id) {
+        if (!$user->isAdmin() && !$natVps->isOwnedBy($user)) {
             abort(403);
         }
 
@@ -506,14 +508,63 @@ class VpsController extends Controller
     }
 
     /**
+     * Update SSH credentials for a VPS.
+     * Available to both admin and authorized users.
+     */
+    public function updateSshCredentials(Request $request, NatVps $natVps): RedirectResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Check access for non-admin users
+        if (!$user->isAdmin() && !$natVps->isOwnedBy($user)) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'ssh_username' => ['nullable', 'string', 'max:255'],
+            'ssh_password' => ['nullable', 'string', 'max:255'],
+            'ssh_port' => ['nullable', 'integer', 'min:1', 'max:65535'],
+        ]);
+
+        $oldValues = [
+            'ssh_username' => $natVps->ssh_username,
+            'ssh_port' => $natVps->ssh_port,
+        ];
+
+        $natVps->update([
+            'ssh_username' => $validated['ssh_username'] ?? $natVps->ssh_username,
+            'ssh_password' => $validated['ssh_password'] ?? $natVps->ssh_password,
+            'ssh_port' => $validated['ssh_port'] ?? $natVps->ssh_port ?? 22,
+        ]);
+
+        $newValues = [
+            'ssh_username' => $natVps->ssh_username,
+            'ssh_port' => $natVps->ssh_port,
+        ];
+
+        $this->auditLogService->log(
+            'vps.ssh_updated',
+            $user,
+            $natVps,
+            AuditLogService::makeUpdateProperties($oldValues, $newValues)
+        );
+
+        return redirect()
+            ->route('vps.show', $natVps)
+            ->with('success', __('app.ssh_credentials_updated'));
+    }
+
+    /**
      * Perform a power action on the VPS.
      */
     protected function performPowerAction(NatVps $natVps, string $action): RedirectResponse
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Check access for non-admin users
-        if (!$user->isAdmin() && $natVps->user_id !== $user->id) {
+        if (!$user->isAdmin() && !$natVps->isOwnedBy($user)) {
             abort(403);
         }
 
@@ -592,9 +643,10 @@ class VpsController extends Controller
      */
     public function resourceUsage(NatVps $natVps): JsonResponse
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if (!$user->isAdmin() && $natVps->user_id !== $user->id) {
+        if (!$user->isAdmin() && !$natVps->isOwnedBy($user)) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
@@ -643,7 +695,10 @@ class VpsController extends Controller
      */
     protected function authorizeAdmin(): void
     {
-        if (!Auth::user()->isAdmin()) {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        
+        if (!$user->isAdmin()) {
             abort(403);
         }
     }

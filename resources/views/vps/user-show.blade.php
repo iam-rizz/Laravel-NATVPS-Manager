@@ -153,47 +153,146 @@
                 </div>
 
                 <!-- SSH Credentials Card -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg" x-data="{ editing: false }">
                     <div class="p-6">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('app.ssh_credentials') }}</h3>
-                        <dl class="space-y-3">
-                            <div class="flex justify-between">
-                                <dt class="text-sm text-gray-500 dark:text-gray-400">{{ __('app.ssh_username') }}</dt>
-                                <dd class="text-sm font-medium text-gray-900 dark:text-gray-100 font-mono">
-                                    {{ $natVps->ssh_username ?? __('app.no_data') }}
-                                </dd>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('app.ssh_credentials') }}</h3>
+                            <div class="flex items-center gap-1">
+                                <button type="button" title="{{ __('app.console') }}"
+                                    @click="$dispatch('open-console', { vpsId: {{ $natVps->id }}, tab: 'vnc' })"
+                                    class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </button>
+                                <button type="button" 
+                                        title="{{ __('app.edit') }}"
+                                        @click="editing = !editing"
+                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    <svg x-show="!editing" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    <svg x-show="editing" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <dt class="text-sm text-gray-500 dark:text-gray-400">{{ __('app.ssh_password') }}</dt>
-                                <dd class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    @if($natVps->ssh_password)
-                                        <span x-data="{ show: false }">
-                                            <span x-show="!show" class="font-mono">••••••••</span>
-                                            <span x-show="show" class="font-mono">{{ $natVps->ssh_password }}</span>
-                                            <button type="button" @click="show = !show" class="ml-2 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 text-xs">
-                                                <span x-show="!show">{{ __('app.show') }}</span>
-                                                <span x-show="show">{{ __('app.hide') }}</span>
-                                            </button>
-                                        </span>
-                                    @else
-                                        {{ __('app.no_data') }}
-                                    @endif
-                                </dd>
-                            </div>
-                            <div class="flex justify-between">
-                                <dt class="text-sm text-gray-500 dark:text-gray-400">{{ __('app.ssh_port') }}</dt>
-                                <dd class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $natVps->ssh_port ?? 22 }}</dd>
-                            </div>
-                        </dl>
+                        </div>
 
-                        @if($natVps->ssh_username && $natVps->server)
-                            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ __('app.ssh_command') }}:</p>
-                                <code class="block p-2 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono text-gray-800 dark:text-gray-200 break-all">
-                                    ssh {{ $natVps->ssh_username . '@' . $natVps->server->ip_address }} -p {{ $natVps->ssh_port ?? 22 }}
-                                </code>
+                        <!-- View Mode -->
+                        <div x-show="!editing">
+                            <dl class="space-y-3">
+                                <div class="flex justify-between">
+                                    <dt class="text-sm text-gray-500 dark:text-gray-400">{{ __('app.ssh_username') }}</dt>
+                                    <dd class="text-sm font-medium text-gray-900 dark:text-gray-100 font-mono">
+                                        {{ $natVps->ssh_username ?? __('app.no_data') }}
+                                    </dd>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <dt class="text-sm text-gray-500 dark:text-gray-400">{{ __('app.ssh_password') }}</dt>
+                                    <dd class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        @if($natVps->ssh_password)
+                                            <span x-data="{ show: false }">
+                                                <span x-show="!show" class="font-mono">••••••••</span>
+                                                <span x-show="show" class="font-mono">{{ $natVps->ssh_password }}</span>
+                                                <button type="button" @click="show = !show" class="ml-2 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 text-xs">
+                                                    <span x-show="!show">{{ __('app.show') }}</span>
+                                                    <span x-show="show">{{ __('app.hide') }}</span>
+                                                </button>
+                                            </span>
+                                        @else
+                                            {{ __('app.no_data') }}
+                                        @endif
+                                    </dd>
+                                </div>
+                                <div class="flex justify-between">
+                                    <dt class="text-sm text-gray-500 dark:text-gray-400">{{ __('app.ssh_port') }}</dt>
+                                    <dd class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $natVps->ssh_port ?? 22 }}</dd>
+                                </div>
+                            </dl>
+
+                            @if($natVps->ssh_username && $natVps->server)
+                                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ __('app.ssh_command') }}:</p>
+                                    <code class="block p-2 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono text-gray-800 dark:text-gray-200 break-all">
+                                        ssh {{ $natVps->ssh_username . '@' . $natVps->server->ip_address }} -p {{ $natVps->ssh_port ?? 22 }}
+                                    </code>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Edit Mode -->
+                        <form x-show="editing" action="{{ route('vps.update-ssh', $natVps) }}" method="POST" class="space-y-4">
+                            @csrf
+                            @method('PUT')
+                            
+                            <div>
+                                <label for="ssh_username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    {{ __('app.ssh_username') }}
+                                </label>
+                                <input type="text" 
+                                       name="ssh_username" 
+                                       id="ssh_username" 
+                                       value="{{ old('ssh_username', $natVps->ssh_username) }}"
+                                       class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                       placeholder="root">
+                                @error('ssh_username')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
                             </div>
-                        @endif
+
+                            <div x-data="{ showPassword: false }">
+                                <label for="ssh_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    {{ __('app.ssh_password') }}
+                                </label>
+                                <div class="mt-1 relative">
+                                    <input :type="showPassword ? 'text' : 'password'" 
+                                           name="ssh_password" 
+                                           id="ssh_password" 
+                                           value="{{ old('ssh_password', $natVps->ssh_password) }}"
+                                           class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-10">
+                                    <button type="button" 
+                                            @click="showPassword = !showPassword"
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                                        <svg x-show="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                        <svg x-show="showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                @error('ssh_password')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="ssh_port" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    {{ __('app.ssh_port') }}
+                                </label>
+                                <input type="number" 
+                                       name="ssh_port" 
+                                       id="ssh_port" 
+                                       value="{{ old('ssh_port', $natVps->ssh_port ?? 22) }}"
+                                       min="1"
+                                       max="65535"
+                                       class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                @error('ssh_port')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="flex justify-end pt-2">
+                                <button type="submit" 
+                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    {{ __('app.save') }}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -362,4 +461,7 @@
             </div>
         </div>
     </div>
+
+    {{-- Console Modal Component --}}
+    <x-console-modal :natVps="$natVps" :vncAvailable="!$apiOffline" :sshAvailable="!empty($natVps->ssh_username) && !empty($natVps->ssh_password)" />
 </x-app-layout>

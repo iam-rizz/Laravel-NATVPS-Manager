@@ -43,6 +43,10 @@ class NatVps extends Model
     protected function casts(): array
     {
         return [
+            'user_id' => 'integer',
+            'server_id' => 'integer',
+            'vps_id' => 'integer',
+            'ssh_port' => 'integer',
             'ssh_username' => 'encrypted',
             'ssh_password' => 'encrypted',
             'cached_specs' => 'array',
@@ -66,4 +70,11 @@ class NatVps extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Check if the VPS is owned by the given user.
+     */
+    public function isOwnedBy(User $user): bool
+    {
+        return $this->user_id !== null && $this->user_id === $user->id;
+    }
 }

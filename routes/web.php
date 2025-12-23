@@ -114,6 +114,9 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     // VPS Resource Usage
     Route::get('vps/{natVps}/resource-usage', [VpsController::class, 'resourceUsage'])->name('vps.resource-usage');
     
+    // VPS SSH Credentials Update (user can update their own)
+    Route::put('vps/{natVps}/ssh', [VpsController::class, 'updateSshCredentials'])->name('vps.update-ssh');
+    
     // Domain Forwarding
     Route::get('vps/{natVps}/domain-forwarding', [\App\Http\Controllers\DomainForwardingController::class, 'index'])->name('vps.domain-forwarding.index');
     Route::post('vps/{natVps}/domain-forwarding', [\App\Http\Controllers\DomainForwardingController::class, 'store'])->name('vps.domain-forwarding.store');
