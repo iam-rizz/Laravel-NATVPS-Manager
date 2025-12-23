@@ -1,6 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __('app.my_vps') }}
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight" style="font-size: 16px;">
+            {{ __('app.my_vps') }}
+        </h2>
     </x-slot>
 
     <div class="space-y-6">
