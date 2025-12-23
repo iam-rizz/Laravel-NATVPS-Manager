@@ -9,6 +9,7 @@ use App\Services\Virtualizor\Contracts\VirtualizorServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ServerController extends Controller
 {
@@ -247,6 +248,140 @@ class ServerController extends Controller
                 'success' => false,
                 'message' => 'Connection test failed: ' . $e->getMessage(),
             ], 500);
+        }
+    }
+
+    /**
+     * Export all servers to JSON file.
+     * Includes decrypted credentials for backup purposes.
+     */
+    public function export(Request $request): StreamedResponse
+    {
+        $servers = Server::all()->map(function ($server) {
+            return [
+                'name' => $server->name,
+                'ip_address' => $server->ip_address,
+                'api_key' => $server->api_key, // Decrypted by cast
+                'api_pass' => $server->api_pass, // Decrypted by cast
+                'port' => $server->port,
+                'is_active' => $server->is_active,
+            ];
+        });
+
+        $exportData = [
+            'exported_at' => now()->toIso8601String(),
+            'app_name' => config('app.name'),
+            'version' => '1.0',
+            'servers' => $servers,
+        ];
+
+        $this->auditLogService->log(
+            'server.exported',
+            $request->user(),
+            null,
+            ['count' => $servers->count()]
+        );
+
+        $filename = 'servers-export-' . now()->format('Y-m-d-His') . '.json';
+
+        return response()->streamDownload(function () use ($exportData) {
+            echo json_encode($exportData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }, $filename, [
+            'Content-Type' => 'application/json',
+        ]);
+    }
+
+    /**
+     * Show import form.
+     */
+    public function showImport()
+    {
+        return view('admin.servers.import');
+    }
+
+    /**
+     * Import servers from JSON file.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:json', 'max:2048'],
+            'mode' => ['required', 'in:skip,update'],
+        ]);
+
+        try {
+            $content = file_get_contents($request->file('file')->getRealPath());
+            $data = json_decode($content, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return back()->with('error', __('app.import_invalid_json'));
+            }
+
+            if (!isset($data['servers']) || !is_array($data['servers'])) {
+                return back()->with('error', __('app.import_invalid_format'));
+            }
+
+            $imported = 0;
+            $updated = 0;
+            $skipped = 0;
+
+            foreach ($data['servers'] as $serverData) {
+                // Validate required fields
+                if (empty($serverData['name']) || empty($serverData['ip_address'])) {
+                    $skipped++;
+                    continue;
+                }
+
+                $existing = Server::where('ip_address', $serverData['ip_address'])->first();
+
+                if ($existing) {
+                    if ($request->mode === 'update') {
+                        $existing->update([
+                            'name' => $serverData['name'],
+                            'api_key' => $serverData['api_key'] ?? $existing->api_key,
+                            'api_pass' => $serverData['api_pass'] ?? $existing->api_pass,
+                            'port' => $serverData['port'] ?? $existing->port,
+                            'is_active' => $serverData['is_active'] ?? $existing->is_active,
+                        ]);
+                        $updated++;
+                    } else {
+                        $skipped++;
+                    }
+                } else {
+                    Server::create([
+                        'name' => $serverData['name'],
+                        'ip_address' => $serverData['ip_address'],
+                        'api_key' => $serverData['api_key'] ?? '',
+                        'api_pass' => $serverData['api_pass'] ?? '',
+                        'port' => $serverData['port'] ?? 4083,
+                        'is_active' => $serverData['is_active'] ?? true,
+                    ]);
+                    $imported++;
+                }
+            }
+
+            $this->auditLogService->log(
+                'server.imported',
+                $request->user(),
+                null,
+                [
+                    'imported' => $imported,
+                    'updated' => $updated,
+                    'skipped' => $skipped,
+                ]
+            );
+
+            return redirect()
+                ->route('servers.index')
+                ->with('success', __('app.import_success', [
+                    'imported' => $imported,
+                    'updated' => $updated,
+                    'skipped' => $skipped,
+                ]));
+
+        } catch (\Exception $e) {
+            Log::error('Server import failed', ['error' => $e->getMessage()]);
+            return back()->with('error', __('app.import_failed') . ': ' . $e->getMessage());
         }
     }
 }

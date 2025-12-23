@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Unified VPS Controller
@@ -700,6 +701,188 @@ class VpsController extends Controller
         
         if (!$user->isAdmin()) {
             abort(403);
+        }
+    }
+
+    /**
+     * Export all NAT VPS to JSON file.
+     * Admin only. Includes decrypted credentials.
+     */
+    public function export(Request $request): StreamedResponse
+    {
+        $this->authorizeAdmin();
+
+        $vpsList = NatVps::with(['server', 'user'])->get()->map(function ($vps) {
+            return [
+                'hostname' => $vps->hostname,
+                'vps_id' => $vps->vps_id,
+                'server_name' => $vps->server?->name,
+                'server_ip' => $vps->server?->ip_address,
+                'user_email' => $vps->user?->email,
+                'ssh_username' => $vps->ssh_username,
+                'ssh_password' => $vps->ssh_password,
+                'ssh_port' => $vps->ssh_port,
+            ];
+        });
+
+        $exportData = [
+            'exported_at' => now()->toIso8601String(),
+            'app_name' => config('app.name'),
+            'version' => '1.0',
+            'warning' => 'This file contains sensitive credentials in plain text. Store securely and delete after use.',
+            'nat_vps' => $vpsList,
+        ];
+
+        $this->auditLogService->log(
+            'vps.exported',
+            $request->user(),
+            null,
+            ['count' => $vpsList->count()]
+        );
+
+        $filename = 'nat-vps-export-' . now()->format('Y-m-d-His') . '.json';
+
+        return response()->streamDownload(function () use ($exportData) {
+            echo json_encode($exportData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }, $filename, [
+            'Content-Type' => 'application/json',
+        ]);
+    }
+
+    /**
+     * Show export confirmation page with security warning.
+     * Admin only.
+     */
+    public function showExport(): View
+    {
+        $this->authorizeAdmin();
+
+        $vpsCount = NatVps::count();
+
+        return view('vps.export', compact('vpsCount'));
+    }
+
+    /**
+     * Show import form.
+     * Admin only.
+     */
+    public function showImportJson(): View
+    {
+        $this->authorizeAdmin();
+
+        return view('vps.import-json');
+    }
+
+    /**
+     * Import NAT VPS from JSON file.
+     * Admin only.
+     */
+    public function importJson(Request $request): RedirectResponse
+    {
+        $this->authorizeAdmin();
+
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:json', 'max:2048'],
+            'mode' => ['required', 'in:skip,update'],
+        ]);
+
+        try {
+            $content = file_get_contents($request->file('file')->getRealPath());
+            $data = json_decode($content, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return back()->with('error', __('app.import_invalid_json'));
+            }
+
+            if (!isset($data['nat_vps']) || !is_array($data['nat_vps'])) {
+                return back()->with('error', __('app.import_invalid_format_vps'));
+            }
+
+            $imported = 0;
+            $updated = 0;
+            $skipped = 0;
+
+            foreach ($data['nat_vps'] as $vpsData) {
+                if (empty($vpsData['hostname']) || empty($vpsData['vps_id'])) {
+                    $skipped++;
+                    continue;
+                }
+
+                // Find server by name or IP
+                $server = null;
+                if (!empty($vpsData['server_name'])) {
+                    $server = Server::where('name', $vpsData['server_name'])->first();
+                }
+                if (!$server && !empty($vpsData['server_ip'])) {
+                    $server = Server::where('ip_address', $vpsData['server_ip'])->first();
+                }
+
+                // Find user by email
+                $user = null;
+                if (!empty($vpsData['user_email'])) {
+                    $user = User::where('email', $vpsData['user_email'])->first();
+                }
+
+                // Check if VPS exists (by server_id + vps_id or hostname)
+                $existing = null;
+                if ($server) {
+                    $existing = NatVps::where('server_id', $server->id)
+                        ->where('vps_id', $vpsData['vps_id'])
+                        ->first();
+                }
+                if (!$existing) {
+                    $existing = NatVps::where('hostname', $vpsData['hostname'])->first();
+                }
+
+                if ($existing) {
+                    if ($request->mode === 'update') {
+                        $existing->update([
+                            'server_id' => $server?->id ?? $existing->server_id,
+                            'user_id' => $user?->id ?? $existing->user_id,
+                            'ssh_username' => $vpsData['ssh_username'] ?? $existing->ssh_username,
+                            'ssh_password' => $vpsData['ssh_password'] ?? $existing->ssh_password,
+                            'ssh_port' => $vpsData['ssh_port'] ?? $existing->ssh_port,
+                        ]);
+                        $updated++;
+                    } else {
+                        $skipped++;
+                    }
+                } else {
+                    NatVps::create([
+                        'hostname' => $vpsData['hostname'],
+                        'vps_id' => $vpsData['vps_id'],
+                        'server_id' => $server?->id,
+                        'user_id' => $user?->id,
+                        'ssh_username' => $vpsData['ssh_username'] ?? null,
+                        'ssh_password' => $vpsData['ssh_password'] ?? null,
+                        'ssh_port' => $vpsData['ssh_port'] ?? 22,
+                    ]);
+                    $imported++;
+                }
+            }
+
+            $this->auditLogService->log(
+                'vps.imported',
+                $request->user(),
+                null,
+                [
+                    'imported' => $imported,
+                    'updated' => $updated,
+                    'skipped' => $skipped,
+                ]
+            );
+
+            return redirect()
+                ->route('vps.index')
+                ->with('success', __('app.import_success', [
+                    'imported' => $imported,
+                    'updated' => $updated,
+                    'skipped' => $skipped,
+                ]));
+
+        } catch (\Exception $e) {
+            Log::error('NAT VPS import failed', ['error' => $e->getMessage()]);
+            return back()->with('error', __('app.import_failed') . ': ' . $e->getMessage());
         }
     }
 }

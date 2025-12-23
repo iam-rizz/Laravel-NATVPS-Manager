@@ -94,6 +94,10 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     Route::post('vps', [VpsController::class, 'store'])->name('vps.store');
     Route::get('vps/import', [VpsController::class, 'showImport'])->name('vps.import');
     Route::post('vps/import/{server}', [VpsController::class, 'importFromServer'])->name('vps.import.server');
+    Route::get('vps/export', [VpsController::class, 'showExport'])->name('vps.export');
+    Route::post('vps/export', [VpsController::class, 'export'])->name('vps.export.download');
+    Route::get('vps/import-json', [VpsController::class, 'showImportJson'])->name('vps.import-json');
+    Route::post('vps/import-json', [VpsController::class, 'importJson'])->name('vps.import-json.store');
     Route::get('vps/{natVps}', [VpsController::class, 'show'])->name('vps.show');
     Route::get('vps/{natVps}/edit', [VpsController::class, 'edit'])->name('vps.edit');
     Route::put('vps/{natVps}', [VpsController::class, 'update'])->name('vps.update');
@@ -142,6 +146,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Server Management
     Route::resource('servers', \App\Http\Controllers\Admin\ServerController::class)->except(['show']);
     Route::post('servers/{server}/test-connection', [\App\Http\Controllers\Admin\ServerController::class, 'testConnection'])->name('servers.test-connection');
+    Route::get('servers-export', [\App\Http\Controllers\Admin\ServerController::class, 'export'])->name('servers.export');
+    Route::get('servers-import', [\App\Http\Controllers\Admin\ServerController::class, 'showImport'])->name('servers.import');
+    Route::post('servers-import', [\App\Http\Controllers\Admin\ServerController::class, 'import'])->name('servers.import.store');
     
     // User Management
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
