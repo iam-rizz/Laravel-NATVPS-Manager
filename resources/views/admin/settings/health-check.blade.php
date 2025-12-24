@@ -200,11 +200,11 @@
                                     Detected Paths
                                 </label>
                                 <div class="space-y-2 text-sm">
-                                    <div class="flex">
+                                    <div class="flex" style="overflow-wrap:anywhere;">
                                         <span class="text-gray-500 dark:text-gray-400 w-24">Base Path:</span>
                                         <code class="text-gray-700 dark:text-gray-300 font-mono">{{ $paths['base_path'] }}</code>
                                     </div>
-                                    <div class="flex">
+                                    <div class="flex" style="overflow-wrap:anywhere;">
                                         <span class="text-gray-500 dark:text-gray-400 w-24">PHP Binary:</span>
                                         <code class="text-gray-700 dark:text-gray-300 font-mono">{{ $paths['php_binary'] }}</code>
                                     </div>
