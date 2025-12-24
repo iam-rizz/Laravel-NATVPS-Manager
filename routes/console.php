@@ -9,6 +9,20 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Cron Heartbeat - runs every minute to track scheduler health
+Schedule::command('cron:heartbeat')
+    ->everyMinute()
+    ->runInBackground();
+
+// Server Health Check - runs every minute, command checks interval internally
+Schedule::command('server:connection-test')
+    ->everyMinute()
+    ->when(function () {
+        return Setting::get('server_health_check_enabled', false);
+    })
+    ->withoutOverlapping()
+    ->runInBackground();
+
 // VPS Resource Monitoring - runs based on configured interval
 Schedule::command('vps:monitor-resources')
     ->everyFifteenMinutes()

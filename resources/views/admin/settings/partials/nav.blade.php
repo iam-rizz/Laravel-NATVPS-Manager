@@ -47,5 +47,14 @@
             </svg>
             Audit Logs
         </a>
+        <a href="{{ route('settings.health-check') }}"
+            class="inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap px-4 py-2 rounded-md text-sm font-medium {{ request()->routeIs('settings.health-check*') ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' }}">
+            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                </path>
+            </svg>
+            Health Check
+        </a>
     </nav>
 </div>

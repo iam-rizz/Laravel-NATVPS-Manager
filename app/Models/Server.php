@@ -25,6 +25,8 @@ class Server extends Model
         'location_data',
         'location_cached_at',
         'last_checked',
+        'last_check_status',
+        'last_check_error',
     ];
 
     /**
@@ -41,6 +43,7 @@ class Server extends Model
             'location_data' => 'array',
             'location_cached_at' => 'datetime',
             'last_checked' => 'datetime',
+            'last_check_status' => 'string',
         ];
     }
 
@@ -79,5 +82,19 @@ class Server extends Model
         return $this->location_data
             && !empty($this->location_data['latitude'])
             && !empty($this->location_data['longitude']);
+    }
+
+    /**
+     * Get health status for display.
+     *
+     * @return string 'online'|'offline'|'unchecked'
+     */
+    public function getHealthStatus(): string
+    {
+        if ($this->last_check_status === null) {
+            return 'unchecked';
+        }
+
+        return $this->last_check_status === 'success' ? 'online' : 'offline';
     }
 }

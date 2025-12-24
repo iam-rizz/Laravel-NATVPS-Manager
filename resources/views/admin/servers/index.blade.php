@@ -86,14 +86,46 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            @if($server->is_active)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
-                                                    {{ __('app.active') }}
-                                                </span>
-                                            @else
+                                            @if(!$server->is_active)
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-400">
                                                     {{ __('app.inactive') }}
                                                 </span>
+                                            @else
+                                                @php $healthStatus = $server->getHealthStatus(); @endphp
+                                                @if($healthStatus === 'online')
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                            <circle cx="4" cy="4" r="3"/>
+                                                        </svg>
+                                                        {{ __('app.server_online') }}
+                                                    </span>
+                                                @elseif($healthStatus === 'offline')
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
+                                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                                <circle cx="4" cy="4" r="3"/>
+                                                            </svg>
+                                                            {{ __('app.server_offline') }}
+                                                        </span>
+                                                        @if($server->last_check_error)
+                                                            <button type="button" 
+                                                                    onclick="showErrorModal('{{ addslashes($server->name) }}', '{{ addslashes($server->last_check_error) }}')"
+                                                                    class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                                                                    title="{{ __('app.view_error') }}">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                </svg>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                @else
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-400">
+                                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                            <circle cx="4" cy="4" r="3"/>
+                                                        </svg>
+                                                        {{ __('app.server_unchecked') }}
+                                                    </span>
+                                                @endif
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -146,14 +178,34 @@
                                         <h3 class="text-sm font-medium text-surface-900 dark:text-white">{{ $server->name }}</h3>
                                         <p class="text-sm text-surface-500 dark:text-surface-400">{{ $server->ip_address }}:{{ $server->port }}</p>
                                     </div>
-                                    @if($server->is_active)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
-                                            {{ __('app.active') }}
-                                        </span>
-                                    @else
+                                    @if(!$server->is_active)
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-100 dark:bg-surface-600 text-surface-600 dark:text-surface-300">
                                             {{ __('app.inactive') }}
                                         </span>
+                                    @else
+                                        @php $healthStatus = $server->getHealthStatus(); @endphp
+                                        @if($healthStatus === 'online')
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3"/>
+                                                </svg>
+                                                {{ __('app.server_online') }}
+                                            </span>
+                                        @elseif($healthStatus === 'offline')
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3"/>
+                                                </svg>
+                                                {{ __('app.server_offline') }}
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-100 dark:bg-surface-600 text-surface-600 dark:text-surface-300">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                    <circle cx="4" cy="4" r="3"/>
+                                                </svg>
+                                                {{ __('app.server_unchecked') }}
+                                            </span>
+                                        @endif
                                     @endif
                                 </div>
                                 <div class="text-sm text-surface-500 dark:text-surface-400 mb-3">
@@ -161,6 +213,13 @@
                                     <span class="mx-2">•</span>
                                     <span>{{ $server->last_checked ? $server->last_checked->diffForHumans() : __('app.never') }}</span>
                                 </div>
+                                @if($server->is_active && $server->getHealthStatus() === 'offline' && $server->last_check_error)
+                                    <div class="mb-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                                        <p class="text-xs text-red-700 dark:text-red-300">
+                                            <span class="font-medium">{{ __('app.connection_error') }}:</span> {{ $server->last_check_error }}
+                                        </p>
+                                    </div>
+                                @endif
                                 <div class="flex gap-2">
                                     <button type="button" 
                                             onclick="testConnection({{ $server->id }})"
@@ -206,7 +265,43 @@
         </div>
     </div>
 
+    <!-- Error Details Modal -->
+    <div id="errorModal" class="fixed inset-0 bg-surface-900/50 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto max-w-md">
+            <div class="bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 shadow-xl mx-4">
+                <div class="p-6">
+                    <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 mb-4">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <h3 id="errorModalTitle" class="text-lg font-display font-semibold text-surface-900 dark:text-white mb-2 text-center"></h3>
+                    <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 mb-6 border border-red-200 dark:border-red-800">
+                        <p id="errorModalMessage" class="text-sm text-red-700 dark:text-red-300 break-words"></p>
+                    </div>
+                    <button onclick="closeErrorModal()" class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-all duration-150">
+                        {{ __('app.close') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function showErrorModal(serverName, errorMessage) {
+            const modal = document.getElementById('errorModal');
+            const title = document.getElementById('errorModalTitle');
+            const message = document.getElementById('errorModalMessage');
+            
+            title.textContent = serverName + ' - {{ __("app.connection_error") }}';
+            message.textContent = errorMessage;
+            modal.classList.remove('hidden');
+        }
+        
+        function closeErrorModal() {
+            document.getElementById('errorModal').classList.add('hidden');
+        }
+
         function testConnection(serverId) {
             const modal = document.getElementById('connectionModal');
             const modalIcon = document.getElementById('modalIcon');

@@ -3,6 +3,89 @@
         {{ __('app.admin_dashboard') }}
     </x-slot>
 
+    <!-- Cron Warning Banner -->
+    @if($showCronWarning)
+    <div class="mb-6 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
+        <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+                <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-sm font-semibold text-amber-800 dark:text-amber-200">
+                    {{ __('app.cron_warning_title') }}
+                </h3>
+                <p class="mt-1 text-sm text-amber-700 dark:text-amber-300">
+                    @if($cronStatus['status'] === 'never')
+                        {{ __('app.cron_warning_never') }}
+                    @else
+                        {{ __('app.cron_warning_stopped', ['time' => $cronStatus['last_run']]) }}
+                    @endif
+                </p>
+                <div class="mt-3 flex flex-wrap gap-3">
+                    <a href="{{ route('settings.health-check') }}" class="inline-flex items-center gap-1.5 text-sm font-medium text-amber-800 dark:text-amber-200 hover:text-amber-900 dark:hover:text-amber-100">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        {{ __('app.cron_configure') }}
+                    </a>
+                    <form action="{{ route('settings.dismiss-cron-warning') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-1.5 text-sm font-medium text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            {{ __('app.cron_dismiss') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Server Offline Alert -->
+    @if($offlineServers->count() > 0)
+    <div class="mb-6 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+        <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+                <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-sm font-semibold text-red-800 dark:text-red-200">
+                    {{ __('app.server_offline_alert_title') }}
+                </h3>
+                <p class="mt-1 text-sm text-red-700 dark:text-red-300">
+                    {{ __('app.server_offline_alert_desc') }}
+                </p>
+                <ul class="mt-2 space-y-2">
+                    @foreach($offlineServers as $server)
+                    <li class="flex items-center justify-between bg-red-100 dark:bg-red-900/30 rounded-lg px-3 py-2">
+                        <div>
+                            <span class="font-medium text-red-800 dark:text-red-200">{{ $server->name }}</span>
+                            <span class="text-red-600 dark:text-red-400 text-sm ml-2">({{ $server->ip_address }})</span>
+                            @if($server->last_check_error)
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-0.5">{{ Str::limit($server->last_check_error, 80) }}</p>
+                            @endif
+                        </div>
+                        <a href="{{ route('servers.edit', $server) }}" class="text-sm font-medium text-red-700 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200 flex items-center gap-1">
+                            {{ __('app.view_server') }}
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
         <!-- Total Servers -->

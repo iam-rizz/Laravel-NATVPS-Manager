@@ -480,4 +480,28 @@ return [
     'response_time' => 'Response Time',
     'last_checked' => 'Last checked',
     'host' => 'Host',
+
+    // Health Check & Cron
+    'cron_warning_title' => 'Cronjob Not Running',
+    'cron_warning_never' => 'The scheduled tasks have never been executed. Please configure the cronjob to enable automatic health checks and monitoring.',
+    'cron_warning_stopped' => 'The scheduled tasks have stopped running. Last run: :time. Please check your cronjob configuration.',
+    'cron_configure' => 'Configure Cronjob',
+    'cron_dismiss' => 'Dismiss for 24 hours',
+    'cron_never_run' => 'Cronjob has never run',
+    'cron_running' => 'Cronjob is running',
+    'cron_stopped' => 'Cronjob has stopped',
+    'server_offline_alert_title' => 'Server Connection Issues',
+    'server_offline_alert_desc' => 'The following servers have failed connection tests:',
+    'view_server' => 'View Server',
+    'health_check' => 'Health Check',
+    'health_check_settings' => 'Health Check Settings',
+
+    // Server Health Status
+    'health_status' => 'Health Status',
+    'server_online' => 'Online',
+    'server_offline' => 'Offline',
+    'server_unchecked' => 'Unchecked',
+    'inactive' => 'Inactive',
+    'connection_error' => 'Connection Error',
+    'view_error' => 'View Error',
 ];

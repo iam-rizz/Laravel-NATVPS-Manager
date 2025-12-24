@@ -659,9 +659,27 @@ class VpsController extends Controller
         }
 
         try {
+            Log::info('Fetching resource usage from Virtualizor', [
+                'nat_vps_id' => $natVps->id,
+                'vps_id' => $natVps->vps_id,
+                'hostname' => $natVps->hostname,
+                'server' => $natVps->server->name,
+            ]);
+
             $resourceUsage = $this->virtualizorService->getResourceUsage($natVps->server, $natVps->vps_id);
 
+            Log::info('Virtualizor resource usage response', [
+                'nat_vps_id' => $natVps->id,
+                'vps_id' => $natVps->vps_id,
+                'response' => $resourceUsage ? $resourceUsage->toArray() : null,
+            ]);
+
             if (!$resourceUsage) {
+                Log::warning('Empty resource usage response from Virtualizor', [
+                    'nat_vps_id' => $natVps->id,
+                    'vps_id' => $natVps->vps_id,
+                ]);
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Unable to fetch resource usage data.',
@@ -673,6 +691,13 @@ class VpsController extends Controller
                 'data' => $resourceUsage->toArray(),
             ]);
         } catch (\Exception $e) {
+            Log::error('Failed to fetch resource usage from Virtualizor', [
+                'nat_vps_id' => $natVps->id,
+                'vps_id' => $natVps->vps_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch resource usage: ' . $e->getMessage(),

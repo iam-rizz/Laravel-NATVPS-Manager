@@ -185,6 +185,36 @@ class MailService
     }
 
     /**
+     * Send server connection failed notification to all admins.
+     */
+    public function sendServerConnectionFailed(\App\Models\Server $server, string $errorMessage): bool
+    {
+        if (!$this->settingService->isNotificationEnabled('server_connection_failed')) {
+            return false;
+        }
+
+        $data = [
+            'server_name' => $server->name,
+            'server_ip' => $server->ip_address,
+            'error_message' => $errorMessage,
+            'check_time' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        // Send to all admin users
+        $adminUsers = \App\Models\User::where('role', \App\Enums\UserRole::Admin)->get();
+        $sent = false;
+
+        foreach ($adminUsers as $admin) {
+            $result = $this->sendTemplate('server_connection_failed', $admin->email, $admin->name, $data);
+            if ($result) {
+                $sent = true;
+            }
+        }
+
+        return $sent;
+    }
+
+    /**
      * Check resource usage and send warning if needed.
      */
     public function checkAndSendResourceWarning(NatVps $vps, array $resourceUsage): void

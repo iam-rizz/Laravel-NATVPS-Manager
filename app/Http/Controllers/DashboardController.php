@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\NatVps;
 use App\Models\Server;
 use App\Models\User;
+use App\Services\CronService;
 use App\Services\Virtualizor\Contracts\VirtualizorServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,8 @@ use Illuminate\View\View;
 class DashboardController extends Controller
 {
     public function __construct(
-        protected VirtualizorServiceInterface $virtualizorService
+        protected VirtualizorServiceInterface $virtualizorService,
+        protected CronService $cronService
     ) {}
 
     /**
@@ -54,6 +56,13 @@ class DashboardController extends Controller
         $activeServers = Server::where('is_active', true)->count();
         $inactiveServers = Server::where('is_active', false)->count();
 
+        // Cron warning banner data
+        $showCronWarning = $this->cronService->shouldShowWarning();
+        $cronStatus = $this->cronService->getStatus();
+
+        // Offline servers alert
+        $offlineServers = Server::where('last_check_status', 'failed')->get();
+
         return view('dashboard.admin', compact(
             'totalServers',
             'totalNatVps',
@@ -63,7 +72,10 @@ class DashboardController extends Controller
             'assignedVpsCount',
             'unassignedVpsCount',
             'activeServers',
-            'inactiveServers'
+            'inactiveServers',
+            'showCronWarning',
+            'cronStatus',
+            'offlineServers'
         ));
     }
 

@@ -479,4 +479,28 @@ return [
     'response_time' => 'Waktu Respon',
     'last_checked' => 'Terakhir diperiksa',
     'host' => 'Host',
+
+    // Health Check & Cron
+    'cron_warning_title' => 'Cronjob Tidak Berjalan',
+    'cron_warning_never' => 'Tugas terjadwal belum pernah dijalankan. Silakan konfigurasi cronjob untuk mengaktifkan health check dan monitoring otomatis.',
+    'cron_warning_stopped' => 'Tugas terjadwal telah berhenti berjalan. Terakhir dijalankan: :time. Silakan periksa konfigurasi cronjob Anda.',
+    'cron_configure' => 'Konfigurasi Cronjob',
+    'cron_dismiss' => 'Abaikan selama 24 jam',
+    'cron_never_run' => 'Cronjob belum pernah dijalankan',
+    'cron_running' => 'Cronjob berjalan',
+    'cron_stopped' => 'Cronjob telah berhenti',
+    'server_offline_alert_title' => 'Masalah Koneksi Server',
+    'server_offline_alert_desc' => 'Server berikut gagal dalam tes koneksi:',
+    'view_server' => 'Lihat Server',
+    'health_check' => 'Health Check',
+    'health_check_settings' => 'Pengaturan Health Check',
+
+    // Server Health Status
+    'health_status' => 'Status Kesehatan',
+    'server_online' => 'Online',
+    'server_offline' => 'Offline',
+    'server_unchecked' => 'Belum Diperiksa',
+    'inactive' => 'Tidak Aktif',
+    'connection_error' => 'Kesalahan Koneksi',
+    'view_error' => 'Lihat Error',
 ];

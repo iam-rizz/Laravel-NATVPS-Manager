@@ -173,6 +173,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         
         Route::get('audit', [\App\Http\Controllers\Admin\SettingController::class, 'audit'])->name('audit');
         Route::put('audit', [\App\Http\Controllers\Admin\SettingController::class, 'updateAudit'])->name('audit.update');
+        
+        Route::get('health-check', [\App\Http\Controllers\Admin\SettingController::class, 'healthCheck'])->name('health-check');
+        Route::put('health-check', [\App\Http\Controllers\Admin\SettingController::class, 'updateHealthCheck'])->name('health-check.update');
+        Route::post('dismiss-cron-warning', [\App\Http\Controllers\Admin\SettingController::class, 'dismissCronWarning'])->name('dismiss-cron-warning');
     });
     
     // Audit Logs

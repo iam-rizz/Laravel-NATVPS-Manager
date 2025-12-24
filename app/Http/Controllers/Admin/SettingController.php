@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\CronService;
 use App\Services\MailService;
 use App\Services\SettingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class SettingController extends Controller
 {
     public function __construct(
         protected SettingService $settingService,
-        protected MailService $mailService
+        protected MailService $mailService,
+        protected CronService $cronService
     ) {}
 
     /**
@@ -184,5 +185,50 @@ class SettingController extends Controller
 
         return redirect()->route('settings.audit')
             ->with('success', 'Audit log settings updated successfully.');
+    }
+
+    /**
+     * Show health check settings.
+     */
+    public function healthCheck()
+    {
+        $settings = Setting::whereIn('group', ['health_check', 'cron'])->get()->keyBy('key');
+        $cronStatus = $this->cronService->getStatus();
+        $cronCommand = $this->cronService->getCronCommand();
+        $paths = $this->cronService->getPaths();
+
+        return view('admin.settings.health-check', compact('settings', 'cronStatus', 'cronCommand', 'paths'));
+    }
+
+    /**
+     * Update health check settings.
+     */
+    public function updateHealthCheck(Request $request)
+    {
+        $request->validate([
+            'server_health_check_enabled' => 'nullable|boolean',
+            'server_health_check_interval' => 'required|integer|in:1,5,10,30,60',
+            'notify_server_connection_failed' => 'nullable|boolean',
+            'cron_environment' => 'required|string|in:vps,hosting',
+        ]);
+
+        Setting::set('server_health_check_enabled', $request->boolean('server_health_check_enabled') ? '1' : '0');
+        Setting::set('server_health_check_interval', $request->server_health_check_interval);
+        Setting::set('notify_server_connection_failed', $request->boolean('notify_server_connection_failed') ? '1' : '0');
+        Setting::set('cron_environment', $request->cron_environment);
+
+        return redirect()->route('settings.health-check')
+            ->with('success', 'Health check settings updated successfully.');
+    }
+
+    /**
+     * Dismiss cron warning for 24 hours.
+     */
+    public function dismissCronWarning()
+    {
+        $this->cronService->dismissWarning();
+
+        return redirect()->back()
+            ->with('success', 'Cron warning dismissed for 24 hours.');
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 
 class Setting extends Model
@@ -22,15 +21,13 @@ class Setting extends Model
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        $settings = self::getAllCached();
+        $setting = self::where('key', $key)->first();
         
-        if (!isset($settings[$key])) {
+        if (!$setting) {
             return $default;
         }
-
-        $setting = $settings[$key];
         
-        return self::castValue($setting['value'], $setting['type']);
+        return self::castValue($setting->value, $setting->type);
     }
 
     /**
@@ -48,24 +45,20 @@ class Setting extends Model
             
             $setting->update(['value' => $value]);
         }
-
-        self::clearCache();
     }
 
     /**
-     * Get all settings cached.
+     * Get all settings as array.
      */
-    public static function getAllCached(): array
+    public static function getAll(): array
     {
-        return Cache::remember('app_settings', 3600, function () {
-            return self::all()->keyBy('key')->map(function ($setting) {
-                return [
-                    'value' => $setting->value,
-                    'type' => $setting->type,
-                    'group' => $setting->group,
-                ];
-            })->toArray();
-        });
+        return self::all()->keyBy('key')->map(function ($setting) {
+            return [
+                'value' => $setting->value,
+                'type' => $setting->type,
+                'group' => $setting->group,
+            ];
+        })->toArray();
     }
 
     /**
@@ -73,20 +66,12 @@ class Setting extends Model
      */
     public static function getByGroup(string $group): array
     {
-        $settings = self::getAllCached();
-        
-        return collect($settings)
-            ->filter(fn($s) => $s['group'] === $group)
-            ->map(fn($s) => self::castValue($s['value'], $s['type']))
+        return self::where('group', $group)
+            ->get()
+            ->mapWithKeys(function ($setting) {
+                return [$setting->key => self::castValue($setting->value, $setting->type)];
+            })
             ->toArray();
-    }
-
-    /**
-     * Clear settings cache.
-     */
-    public static function clearCache(): void
-    {
-        Cache::forget('app_settings');
     }
 
     /**
@@ -113,7 +98,7 @@ class Setting extends Model
     {
         try {
             return Crypt::decryptString($value);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $value;
         }
     }

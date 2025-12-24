@@ -50,6 +50,14 @@ class EmailTemplateSeeder extends Seeder
                 'variables' => ['user_name', 'vps_hostname', 'cpu_usage', 'ram_usage', 'disk_usage', 'warning_type', 'threshold'],
                 'is_active' => true,
             ],
+            [
+                'slug' => 'server_connection_failed',
+                'name' => 'Server Connection Failed',
+                'subject' => '🚨 [Alert] Server Connection Failed: {{server_name}}',
+                'body' => $this->getServerConnectionFailedTemplate(),
+                'variables' => ['server_name', 'server_ip', 'error_message', 'check_time'],
+                'is_active' => true,
+            ],
         ];
 
         foreach ($templates as $template) {
@@ -314,6 +322,64 @@ HTML;
             </div>
 
             <p style="margin-top: 20px;">Please consider optimizing your applications or upgrading your VPS resources.</p>
+        </div>
+        <div class="footer">
+            <p>© {{app_name}}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+HTML;
+    }
+
+    private function getServerConnectionFailedTemplate(): string
+    {
+        return <<<'HTML'
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #EF4444; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+        .alert-box { background: #FEE2E2; padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid #EF4444; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { font-weight: bold; color: #6b7280; }
+        .info-value { color: #111827; }
+        .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Server Connection Failed</h1>
+        </div>
+        <div class="content">
+            <p>A server connection test has failed. Please investigate immediately.</p>
+            
+            <div class="alert-box">
+                <div class="info-row">
+                    <span class="info-label">Server Name:</span>
+                    <span class="info-value">{{server_name}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">IP Address:</span>
+                    <span class="info-value">{{server_ip}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Error Message:</span>
+                    <span class="info-value">{{error_message}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Check Time:</span>
+                    <span class="info-value">{{check_time}}</span>
+                </div>
+            </div>
+
+            <p>Please check the server status and connectivity. If the issue persists, contact your hosting provider.</p>
         </div>
         <div class="footer">
             <p>© {{app_name}}. All rights reserved.</p>
